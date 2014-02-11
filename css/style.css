@@ -1,0 +1,55 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: helvetica, sans-serif;
+	font-size: 13px;
+}
+
+.auth-form {
+	width: 400px;
+	margin: 20px auto;
+	padding: 10px;
+	border: 1px solid silver;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	background-color: #e6e6e6;
+}
+
+.auth-logo{
+	width: 200px;
+	height: 103px;
+	margin: 10px auto;
+	background: transparent url('http://www.t4zone.info/forum/styles/t4zthemeLeft/imageset/newlogot4z.png') top left no-repeat;
+}
+.auth-form form{
+	padding: 5px;
+	text-align: center;
+	margin-bottom: 10px;
+}
+.auth-form p {
+	margin-bottom: 5px;
+	padding: 10px;
+	color: #707070;
+	font-size: 11px;
+}
+.auth-form p a {
+	color: #707070;
+}
+.auth-form form input[type=submit] {
+	background-color: #FF9900;
+	color: white;
+	border: 1px solid silver;
+	padding: 5px;
+}
+.auth-error {
+	margin: 5px 10px;
+	text-align: center;
+	background-color: #FFD387;
+	border: 1px solid #FF6338;
+	color: #FF0022;
+	padding: 10px;
+}
