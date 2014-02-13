@@ -13,12 +13,14 @@ $PARAM_pwd='1h687C71i3kpA6O4'; // mot de passe de l'utilisateur pour se connecte
 
 try {
 	$conn_img = new PDO('mysql:host='.$PARAM_host.';port='.$PARAM_port.';dbname='.$PARAM_db_img, $PARAM_user, $PARAM_pwd);
+	$conn_img->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
 }catch(Exception $e){
 	echo "DB connection to IMGT4Z error: ".$e->getMessage();
 	die();
 }
 try {
 	$conn_forum = new PDO('mysql:host='.$PARAM_host.';port='.$PARAM_port.';dbname='.$PARAM_db_forum, $PARAM_user, $PARAM_pwd);
+	$conn_forum->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
 }catch(Exception $e){
 	echo "DB connection to FORUM error: ".$e->getMessage();
 	die();

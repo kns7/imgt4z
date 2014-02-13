@@ -3,6 +3,7 @@ session_start();
 /* Include Config File */
 include('inc/config.php');
 /* Include Classes */
+include('inc/class/ImagesManager.class.php');
 include('inc/class/User.class.php');
 include('inc/class/Image.class.php');
 /* Check if User is logged */
@@ -23,9 +24,9 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 	<body>
 		<nav>
 			<ul>
+				<li class='menu active' rel='home'>Accueil</li>
 				<li class='menu' rel='upload'>Uploader</li>
 				<li class='menu' rel='images'>Mes images</li>
-				<li class='menu' rel='compte'>Mon compte</li>
 				<li class='menu' rel='logout'>D&eacute;connexion</li>
 			</ul>
 		</nav>

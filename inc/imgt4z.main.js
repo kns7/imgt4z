@@ -1,5 +1,7 @@
 var rpcfile = "inc/ajax_rpc.php";
+
 $(document).ready(function(){
+	/* Menu actions (click) */
 	$(document).on("click",".menu",function(){
 		$(".loader").fadeIn();
 		var action = $(this).attr('rel');
@@ -23,4 +25,20 @@ $(document).ready(function(){
 	});
 });
 
-
+/* Functions */
+function buildTemplate(template){
+	switch(template){
+		case "images":
+			
+		break;
+		
+		case "upload":
+			
+		break;
+		
+		default:
+		case "home":
+			
+		break;
+	}
+}

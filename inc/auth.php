@@ -6,7 +6,8 @@
 if(isset($_POST) && !empty($_POST['user'])){
 	/* Try to login user using phpBB Functions to hash password */
 	/* => Bon ca me broute, j'y arrive pô... 
-	 * include('phpbbinc.php');
+	
+	include('phpbbinc.php');
 	$query = "SELECT user_id, username, username_clean FROM for_users WHERE username_clean = ? AND user_password = ?";
 	$prep = $conn_forum->prepare($query);
 	$prep->bindValue(1,$_POST['user'],PDO::PARAM_STR);
@@ -14,20 +15,20 @@ if(isset($_POST) && !empty($_POST['user'])){
 	$prep->execute();
 	$return = $prep->fetchAll();
 	print_r($return);*/
+	
 	/*
 	 * Du coup, mot de passe temporaire:
 	 * lat4zslpf (Les Admins T4Zone Sont Les Plus Beaux) ;)
 	 */
 	if($_POST['user'] == "Serialg" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
 		$user = new User('25549','Serialg','1');
-		header("Location: index.php");
+		header("Location: /");
 	}elseif($_POST['user'] == "jeb" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
 		$user = new User('2554','jeb','1');
-		header("Location: index.php");
+		header("Location: /");
 	}else{
 		$error = "Utilisateur et/ou mot de passe incorrects!";
 	}
-	
 }
 ?>
 <html lang="fr">
@@ -50,7 +51,8 @@ if(isset($_POST) && !empty($_POST['user'])){
 			<?php
 			if(isset($error)){
 				?><div class='auth-error'><?php echo $error;?></div><?php
-			}?>
+			}
+			?>
 		</section>
 	</body>
 	<script type='text/javascript' src='inc/jquery-1.11.0.min.js'></script>
