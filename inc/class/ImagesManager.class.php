@@ -20,15 +20,16 @@ class ImagesManager{
 	
 	public function get($id){
 		$id = (int) $id;
-		$q = $this->_db->prepare("SELECT id, timestamp, extension, permanent, userid, title, dateadd FROM images WHERE id = :id");
-		$q->execute(array(':id',$id));
+		$q = $this->_db->prepare("SELECT id, timestamp, orientation, permanent, userid, title, dateadd FROM images WHERE id = :id");
+		$q->bindValue(':id',$id);
+		$q->execute();
 		
 		return new Image($q->fetch(PDO::FETCH_ASSOC));
 	}
 	
 	public function getList($userid){
 		$images = array();
-		$q = $this->_db->prepare("SELECT id, timestamp, extension, permanent, userid, title, dateadd FROM images WHERE userid = :userid");
+		$q = $this->_db->prepare("SELECT id, timestamp, orientation, permanent, userid, title, dateadd FROM images WHERE userid = :userid");
 		$q->bindValue(':userid',$userid);
 		$q->execute();
 		

@@ -9,7 +9,7 @@ class Image {
 	private $_title = "";
 	private $_timestamp;
 	private $_permanent;
-	private $_extension;
+	private $_orientation;
 	private $_dateadd;
 	
 	/**
@@ -38,7 +38,7 @@ class Image {
 	public function timestamp(){ return $this->_timestamp; }
 	public function title(){ return $this->_title; }
 	public function permanent(){ return $this->_permanent; }
-	public function extension(){ return $this->_extension; }
+	public function orientation(){ return $this->_orientation; }
 	public function dateadd(){ return $this->_dateadd; }
 	
 	/* Setters */
@@ -70,9 +70,10 @@ class Image {
 			$this->_permanent = $val;
 		}
 	}
-	public function setExtension($val){
-		if(is_string($val)){
-			$this->_extension = $val; 
+	public function setOrientation($val){
+		$val = (int) $val;
+		if(is_int($val)){
+			$this->_orientation = $val; 
 		}
 	}
 	
@@ -97,7 +98,7 @@ class Image {
 		
 	}
 	
-	public function rotate(){
+	public function rotate($direction){
 		
 	}
 }

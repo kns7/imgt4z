@@ -220,6 +220,12 @@ table td input[type=text]:focus, table td textarea:focus {
 	display: inline;
 	float: left;
 	margin: 5px 0px 0px 0px;
+	line-height: 20px;
+	padding-top: 6px;
+}
+.img-bloc .infos .title em {
+	font-size: 11px;
+	font-weight: normal;
 }
 .img-bloc .infos .delete {
 	width: 20px;

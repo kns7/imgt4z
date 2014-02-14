@@ -31,9 +31,7 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 			</ul>
 		</nav>
 		<section id='global'>
-			<article class='help'>
-				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sit amet eleifend velit. Suspendisse sagittis vehicula sapien sit amet interdum. In felis tortor, porttitor in tempor ut, auctor vel nisl. Vestibulum quis dignissim justo. Integer at placerat lacus. Praesent at metus quis nisl fringilla semper. Duis fringilla commodo enim, ut vestibulum purus sodales nec. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur molestie, elit in imperdiet facilisis, lorem ligula condimentum justo, sed tristique sem massa eget nunc.</p>
-			</article>
+			
 		</section>
 		<div class='loader'>Chargement...</div>
 	</body>

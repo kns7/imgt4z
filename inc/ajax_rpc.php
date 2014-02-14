@@ -39,12 +39,28 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 					$rArray['image'][$i]['id'] = $image->id();
 					$rArray['image'][$i]['timestamp'] = $image->timestamp();
 					$rArray['image'][$i]['title'] = $image->title();
-					$rArray['image'][$i]['extension'] = $image->extension();
+					$rArray['image'][$i]['orientation'] = $image->orientation();
 					$rArray['image'][$i]['permanent'] = $image->permanent();
 					$rArray['image'][$i]['dateadd'] = $image->dateadd();
 					$rArray['image'][$i]['userid'] = $image->userid();
 					$i++;
 				}
+			}
+		break;
+		
+		case "image":
+			/* Define in Array what to do */
+			$rArray['template'] = "image";
+			/* Get Image per ID */
+			$image = $manager->get($_POST['id']);
+			if(!empty($image)){
+				$rArray['image']['id'] = $image->id();
+				$rArray['image']['timestamp'] = $image->timestamp();
+				$rArray['image']['title'] = $image->title();
+				$rArray['image']['orientation'] = $image->orientation();
+				$rArray['image']['permanent'] = $image->permanent();
+				$rArray['image']['dateadd'] = $image->dateadd();
+				$rArray['image']['userid'] = $image->userid();
 			}
 		break;
 	}
