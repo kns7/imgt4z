@@ -80,7 +80,22 @@ function buildTemplate(template,datas){
 		break;
 		
 		case "upload":
-			
+			var help = $("<article>",{
+				class: "help",
+				html: d.help
+			});
+			var uploadform = $("<div>",{
+				class: "upload-form",
+				html: "<table></table>"
+			});
+			var btns = $("<div>",{
+				class: "upload-btns",
+				html: "<div class='btn' rel='send'>Envoyer</div><div class='btn' rel='cancel'>Annuler</div><div class='clear'></div>"
+			});
+			$("#global").append(help,uploadform,btns);
+			$("table").append("<tr><th>Fichier image</th><td><input type='file' id='image-file'/></td></tr>");
+			$("table").append("<tr><th>Titre</th><td><input type='text' id='image-title' value=''/></td></tr>");
+			$("table").append("<tr><th>Catégorie</th><td><select id='image-category'><option value='1' selected>Mon Transporter</option><option value='2'>Report Voyages</option><option value='3'>Report Rassos</option><option value='4'>Tutos</option></select></td></tr>");
 		break;
 		
 		default:
