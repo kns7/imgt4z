@@ -16,6 +16,11 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 <html lang="fr">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="robots" content="noindex,nofollow,noarchive">
+		<meta name="google" content="noimageindex">
+		<meta name="msnbot" content="noimageindex">
+		<meta name="bingbot" content="noimageindex">
+		<meta name="Slurp" content="noimageindex">
 		<link rel="shortcut icon" href="favicon.ico"/>
 		<link rel="icon" href="favicon.ico"/>
 		<link rel="stylesheet" href="css/style.css"/>
