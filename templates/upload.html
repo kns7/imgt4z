@@ -1,0 +1,57 @@
+<html lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="shortcut icon" href="favicon.ico"/>
+		<link rel="icon" href="favicon.ico"/>
+		<link rel="stylesheet" href="../css/style.css"/>
+		<title>T4Zone Images</title>
+	</head>
+	<body>
+		<nav>
+			<ul>
+				<li class='menu' rel='home'>Accueil</li>
+				<li class='menu upload' rel='upload'>Uploader</li>
+				<li class='menu' rel='images'>Mes images</li>
+				<li class='menu' rel='logout'>D&eacute;connexion</li>
+			</ul>
+		</nav>
+		<section id='global' class='upload'>
+			<article class='help'>
+				<p>Via ce formulaire, tu peux envoyer une image sur T4Zone Images.<br/>Les formats d'images acceptés sont les suivants: JPEG, PNG et GIF.</p>
+				<p>L'image sera automatiquement redimensionnée en 800x600 (ou 600x800), un Watermark (Tatouage Numérique) sera ajouté à l'image et enfin un lien sera automatiquement généré pour pouvoir poster l'image sur le forum.<br/>Si l'image est mal orientée, il te sera possible une fois envoyée, de la faire tourner pour la mettre dans le bon sens!</p>
+				<p><em>S'il devait y avoir un problème lors de l'envoi de l'image, merci de contacter les admins du Forum T4Zone <a href='mailto:admin@t4zone.org?subject=Erreur Upload T4Zone Images'>admins@t4zone.org</a></em>
+			</article>
+			<div class='upload-form'>
+				<form>
+					<table>
+						<tr>
+							<th>Ton Image</th>
+							<td><input type='file' id='image-file'/></td>
+						</tr>
+						<tr>
+							<th>Titre</th>
+							<td><input type='text' id='image-title' value=""/></td>
+						</tr>
+						<tr>
+							<th>Catégorie</th>
+							<td>
+								<select id='image-category'>
+									<option value='1' selected>Mon Transporter</option>
+									<option value='2'>Report Voyages</option>
+									<option value='3'>Report Rassos</option>
+									<option value='4'>Tutos</option>
+								</select>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<div class='upload-btns'>
+				<div class='btn' rel='send'>Envoyer</div>
+				<div class='btn' rel='cancel'>Annuler</div>
+				<div class='clear'></div>
+			</div>
+		</section>
+		<div class='loader'>Chargement...</div>
+	</body>
+</html>

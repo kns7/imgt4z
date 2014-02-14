@@ -1,0 +1,59 @@
+<html lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="shortcut icon" href="favicon.ico"/>
+		<link rel="icon" href="favicon.ico"/>
+		<link rel="stylesheet" href="../css/style.css"/>
+		<title>T4Zone Images</title>
+	</head>
+	<body>
+		<nav>
+			<ul>
+				<li class='menu' rel='home'>Accueil</li>
+				<li class='menu' rel='upload'>Uploader</li>
+				<li class='menu active' rel='images'>Mes images</li>
+				<li class='menu' rel='logout'>D&eacute;connexion</li>
+			</ul>
+		</nav>
+		<section id='global' class='image'>
+			<div class='img-detail'>
+				<div class='img-preview'>
+					<img src='../storage/25549/1235678960.jpg' width='400' height='300'/>
+				</div>
+				<div class='img-ctrl'>
+					<div class='img-edit'>
+						<table>
+							<tr>
+								<th>Catégorie</th>
+								<td>
+									<select id='image-category'>
+										<option value='1' selected>Mon Transporter</option>
+										<option value='2'>Report Voyages</option>
+										<option value='3'>Report Rassos</option>
+										<option value='4'>Tutos</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th>Titre</th>
+								<td><input type='text' id='image-title' value="Posage panneau arrière"/></td>
+							</tr>
+							<tr>
+								<th>Lien pour le Forum</th>
+								<td><textarea readonly>[img]http://img.t4zone.org/i.php?i=1235678960d25549[/img]</textarea></td>
+							</tr>
+						</table>
+					</div>
+					<div class='img-actions'>
+						<div class='btn' rel='delete'></div>
+						<div class='btn' rel='rotater'></div>
+						<div class='btn' rel='rotatel'></div>
+						<div class='btn' rel='resize' rev='1'></div>
+						<div class='clear'></div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<div class='loader'>Chargement...</div>
+	</body>
+</html>

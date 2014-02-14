@@ -5,6 +5,16 @@
 body {
 	font-family: helvetica, sans-serif;
 	font-size: 13px;
+	background: #f2f2f2;
+}
+
+a {
+	color: #555555;
+	text-decoration: underline;
+}
+
+.clear{
+	clear: both;
 }
 
 /* Authentication Form */
@@ -77,7 +87,9 @@ body {
 }
 
 nav {
-	float: left;
+	position: fixed;
+	top: 0px;
+	left: 0px;
 	width: 100px;
 	height: 100%;
 	background: #212121;
@@ -114,7 +126,7 @@ nav ul .menu:hover,nav ul li.active { background-color: #010101; }
 
 #global{
 	margin-left: 100px;
-	padding: 20px;
+	padding: 0px 20px;
 }
 #global article {
 	padding: 10px;
@@ -127,4 +139,167 @@ nav ul .menu:hover,nav ul li.active { background-color: #010101; }
 	-webkit-border-radius: 5px;
 	border: 1px solid #000551;
 	padding-left: 40px; 
+	margin: 10px 0px;
 }
+
+#global .help p {
+	margin: 5px 0px;
+}
+
+/* Formulaires */
+table {
+	border: 0px solid;
+	border-collapse: collapse;
+	width: 100%;
+}
+table td, table td {
+	padding: 10px;
+	font-family: helvetica, sans-serif;
+}
+table th {
+	text-align: left;
+	font-weight: bold;
+	color: #ffffff;
+	font-size: 13px;
+	width: 150px;
+	padding: 2px;
+}
+table td input[type=text], table td textarea {
+	width: 90%;
+	height: 30px;
+	line-height: 30px;
+	border-radius: 5px;
+	box-shadow: inset -1px 1px 8px 0px black;
+	border: 1px solid #212121;
+	padding: 0px 10px;
+}
+table td textarea {
+	height: 32px;
+	text-align: center;
+}
+table td input[type=text]:focus, table td textarea:focus {
+	border: 1px solid #ff9900;
+}
+
+/* Sections Mes Images */
+.images {
+	
+}
+.images .img-bloc {
+	float: left;
+	width: 200px;
+	height: 200px;
+	border: 1px solid white;
+	border-radius: 5px;
+	cursor: pointer;
+	margin: 10px;
+	padding: 10px;
+	text-align: center;
+	background: white;
+}
+.images .img-bloc:hover {
+	border: 1px solid #FF9900;
+	box-shadow: 0px 0px 10px #FF9900;
+}
+.images .img-bloc .img {
+	max-height: 150px;
+	height: 150px;
+	overflow: hidden;
+}
+.images .img-bloc .infos {
+	line-height: 50px;
+	height: 50px;
+	display: inline;
+}
+.img-bloc .infos .title {
+	font-family: helvetica, sans-serif;
+	font-weight: bold;
+	color: #808080;
+	font-size: 12px;
+	width: 160px;
+	display: inline;
+	float: left;
+	margin: 5px 0px 0px 0px;
+}
+.img-bloc .infos .delete {
+	width: 20px;
+	height: 20px;
+	background: #808080 url('../img/delete_16.png') 50% no-repeat;
+	border-radius: 4px;
+	cursor: pointer;
+	display: inline;
+	float: left;
+	margin: 20px 0px 0px 20px;
+}
+.img-bloc .infos .delete:hover {
+	background-color: #E01200;
+}
+.img-detail{
+	width: 800px;
+	padding: 20px;
+	background: white;
+	margin: 10px auto;
+}
+.img-preview {
+	margin: 0px auto;
+	text-align: center;
+}
+.img-ctrl {
+	position: relative;
+}
+.img-edit {
+	margin-top: 10px;
+	background: #555555;
+	padding: 10px;
+	border-radius: 5px;
+}
+.img-actions {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	margin: 0px;
+}
+.img-actions .btn {
+	float: right;
+	width: 32px;
+	height: 32px;
+	background-color: #ff9900;
+	background-position: 50%;
+	background-repeat: no-repeat;
+	border-radius: 5px;
+	margin: 5px;
+	cursor: pointer;
+}
+.img-actions .btn[rel='resize']{ background-image: url('../img/resize_24.png'); }
+.img-actions .btn[rel='rotatel']{ background-image: url('../img/rotate_left_24.png'); }
+.img-actions .btn[rel='rotater']{ background-image: url('../img/rotate_right_24.png'); }
+.img-actions .btn[rel='delete']{ background-image: url('../img/delete_24.png'); background-color: #E01200; }
+.img-actions .btn:hover { background-color: #FFD387; }
+.img-actions .btn[rel='delete']:hover { background-color: #DD7A73; }
+
+
+/* Section Upload */
+.upload-form, .upload-btns {
+	margin-top: 10px;
+	background: #555555;
+	padding: 10px;
+	border-radius: 5px;
+}
+.upload-btns .btn {
+	float: right;
+	height: 32px;
+	width: 100px;
+	line-height: 32px;
+	border-radius: 5px;
+	margin: 5px;
+	text-align: center;
+	vertical-align: middle;
+	color: #fff;
+	cursor: pointer;
+	font-weight: bold;
+	
+}
+.upload-btns .btn[rel='send']{ background-color: #43C343;}
+.upload-btns .btn[rel='send']:hover { background-color: #00FF00; }
+.upload-btns .btn[rel='cancel']{ background-color: #EB4116;}
+.upload-btns .btn[rel='cancel']:hover { background-color: #FF0000; }
