@@ -17,6 +17,17 @@ a {
 	clear: both;
 }
 
+.noresults {
+	width: 300px;
+	margin: 50px auto;
+	padding: 20px;
+	color: #555;
+	background-color: #FFD387;
+	border: 1px solid #ff9900;
+	border-radius: 5px;
+	text-align: center;
+}
+
 /* Authentication Form */
 .auth-form {
 	width: 400px;

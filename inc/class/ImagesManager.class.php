@@ -20,7 +20,7 @@ class ImagesManager{
 	
 	public function get($id){
 		$id = (int) $id;
-		$q = $this->_db->prepare("SELECT id, timestamp, orientation, permanent, userid, title, dateadd FROM images WHERE id = :id");
+		$q = $this->_db->prepare("SELECT images.id as id, timestamp, orientation, categorieid, categories.name as categorie, userid, title, dateadd FROM images Inner Join categories ON images.categorieid = categories.id WHERE images.id = :id");
 		$q->bindValue(':id',$id);
 		$q->execute();
 		
@@ -29,7 +29,7 @@ class ImagesManager{
 	
 	public function getList($userid){
 		$images = array();
-		$q = $this->_db->prepare("SELECT id, timestamp, orientation, permanent, userid, title, dateadd FROM images WHERE userid = :userid");
+		$q = $this->_db->prepare("SELECT images.id as id, timestamp, orientation, categorieid, categories.name as categorie, userid, title, dateadd FROM images Inner Join categories ON images.categorieid = categories.id WHERE userid = :userid ORDER BY dateadd DESC");
 		$q->bindValue(':userid',$userid);
 		$q->execute();
 		
@@ -40,8 +40,8 @@ class ImagesManager{
 	}
 	
 	public function update(Image $image){
-		$q = $this->_db->prepare("UPDATE images SET permanent = :permanent, title = :title WHERE id = :id");
-		$q->bindValue(':permanent', $image->permanent(), PDO::PARAM_INT);
+		$q = $this->_db->prepare("UPDATE images SET categorieid = :categorieid, title = :title WHERE id = :id");
+		$q->bindValue(':categorieid', $image->categorieid(), PDO::PARAM_INT);
 		$q->bindValue(':title', $image->title(), PDO::PARAM_STR);
 		$q->execute();
 	}

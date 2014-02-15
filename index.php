@@ -3,9 +3,11 @@ session_start();
 /* Include Config File */
 include('inc/config.php');
 /* Include Classes */
+include('inc/class/CategoriesManager.class.php');
 include('inc/class/ImagesManager.class.php');
 include('inc/class/User.class.php');
 include('inc/class/Image.class.php');
+include('inc/class/Categorie.class.php');
 /* Check if User is logged */
 if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){ 
 	include('inc/auth.php');

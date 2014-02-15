@@ -8,7 +8,8 @@ class Image {
 	private $_userid;
 	private $_title = "";
 	private $_timestamp;
-	private $_permanent;
+	private $_categorieid;
+	private $_categorie;
 	private $_orientation;
 	private $_dateadd;
 	
@@ -37,7 +38,8 @@ class Image {
 	public function userid(){ return $this->_userid; }
 	public function timestamp(){ return $this->_timestamp; }
 	public function title(){ return $this->_title; }
-	public function permanent(){ return $this->_permanent; }
+	public function categorieid(){ return $this->_categorieid; }
+	public function categorie(){ return $this->_categorie; }
 	public function orientation(){ return $this->_orientation; }
 	public function dateadd(){ return $this->_dateadd; }
 	
@@ -64,10 +66,15 @@ class Image {
 			$this->_userid = $val;
 		}
 	}
-	public function setPermanent($val){
+	public function setCategorieid($val){
 		$val = (int) $val;
 		if(is_int($val)){
-			$this->_permanent = $val;
+			$this->_categorieid = $val;
+		}
+	}
+	public function setCategorie($val){
+		if(is_string($val)){
+			$this->_categorie = $val;
 		}
 	}
 	public function setOrientation($val){
