@@ -1,3 +1,8 @@
+/*
+Pour l'upload AJAX:
+http://www.script-tutorials.com/pure-html5-file-upload/
+*/
+
 var rpcfile = "inc/ajax_rpc.php";
 
 $(document).ready(function(){
