@@ -31,16 +31,17 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 	<body>
 		<nav>
 			<ul>
-				<li class='menu active' rel='home'>Accueil</li>
-				<li class='menu' rel='upload'>Uploader</li>
-				<li class='menu' rel='images'>Mes images</li>
-				<li class='menu' rel='logout'>D&eacute;connexion</li>
+				<li class='menu active' rel='home'>ACCUEIL</li>
+				<li class='menu' rel='upload'>UPLOADER</li>
+				<li class='menu' rel='images'>MES IMAGES</li>
+				<li class='menu' rel='logout'>DECONNEXION</li>
 			</ul>
 		</nav>
 		<section id='global'>
 			
 		</section>
 		<div class='loader'>Chargement...</div>
+		<div class='overlay'></div>
 	</body>
 	<script type='text/javascript' src='inc/jquery-1.11.0.min.js'></script>
 	<script type='text/javascript' src='inc/imgt4z.main.js'></script>

@@ -30,7 +30,7 @@ a {
 
 /* Authentication Form */
 .auth-form {
-	width: 400px;
+	width: 210px;
 	margin: 20px auto;
 	padding: 10px;
 	border: 1px solid silver;
@@ -46,18 +46,20 @@ a {
 	background: transparent url('http://www.t4zone.info/forum/styles/t4zthemeLeft/imageset/newlogot4z.png') top left no-repeat;
 }
 .auth-form form{
-	padding: 5px;
 	text-align: center;
 	margin-bottom: 10px;
 }
 .auth-form p {
 	margin-bottom: 5px;
-	padding: 10px;
+	padding: 10px 0px;
 	color: #707070;
 	font-size: 11px;
 }
 .auth-form p a {
 	color: #707070;
+}
+.auth-form input {
+	margin: 5px;
 }
 .auth-form form input[type=submit] {
 	background-color: #FF9900;
@@ -96,6 +98,17 @@ a {
 	background-color: #212121;
 	border-color: #808080;
 }
+.overlay {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 100;
+	background: white;
+	opacity: 0.9;
+	display: none;
+}
 
 nav {
 	position: fixed;
@@ -128,6 +141,7 @@ nav ul .menu {
 	background-position: 50% 10px;
 	background-repeat: no-repeat;
 	cursor: pointer;
+	font-size: 11px;
 }
 nav ul .menu[rel=upload]{ background-image: url('../img/menu_upload.png'); }
 nav ul .menu[rel=images]{ background-image: url('../img/menu_images.png'); }
@@ -175,20 +189,28 @@ table th {
 	width: 150px;
 	padding: 2px;
 }
-table td input[type=text], table td textarea {
+table td input[type=text], table td textarea, table td select {
 	width: 90%;
 	height: 30px;
 	line-height: 30px;
 	border-radius: 5px;
 	box-shadow: inset -1px 1px 8px 0px black;
 	border: 1px solid #212121;
-	padding: 0px 10px;
+	padding: 0px 24px;
+	background-color: #FFFFFF;
+	background-position: 4px 50%;
+	background-repeat: no-repeat;
 }
 table td textarea {
 	height: 32px;
 	text-align: center;
+	padding: 0px;
 }
-table td input[type=text]:focus, table td textarea:focus {
+table td select {
+	width: 250px;
+	padding-right: 0px;
+}
+table td input[type=text]:focus, table td textarea:focus, table td select:focus {
 	border: 1px solid #ff9900;
 }
 
@@ -196,6 +218,14 @@ table td input[type=text]:focus, table td textarea:focus {
 .images {
 	
 }
+.img-menu {
+	background: white;
+	border-radius: 5px;
+	margin: 10px auto;
+	padding: 10px;
+	width: 70%;
+}
+
 .images .img-bloc {
 	float: left;
 	width: 200px;
@@ -276,24 +306,6 @@ table td input[type=text]:focus, table td textarea:focus {
 	right: 5px;
 	margin: 0px;
 }
-.img-actions .btn {
-	float: right;
-	width: 32px;
-	height: 32px;
-	background-color: #ff9900;
-	background-position: 50%;
-	background-repeat: no-repeat;
-	border-radius: 5px;
-	margin: 5px;
-	cursor: pointer;
-}
-.img-actions .btn[rel='resize']{ background-image: url('../img/resize_24.png'); }
-.img-actions .btn[rel='rotatel']{ background-image: url('../img/rotate_left_24.png'); }
-.img-actions .btn[rel='rotater']{ background-image: url('../img/rotate_right_24.png'); }
-.img-actions .btn[rel='delete']{ background-image: url('../img/delete_24.png'); background-color: #E01200; }
-.img-actions .btn:hover { background-color: #FFD387; }
-.img-actions .btn[rel='delete']:hover { background-color: #DD7A73; }
-
 
 /* Section Upload */
 .upload-form, .upload-btns {
@@ -302,21 +314,36 @@ table td input[type=text]:focus, table td textarea:focus {
 	padding: 10px;
 	border-radius: 5px;
 }
-.upload-btns .btn {
-	float: right;
+
+
+/* Buttons Decorations */
+.btn {
+	width: 32px;
 	height: 32px;
-	width: 100px;
 	line-height: 32px;
+	background-color: #ff9900;
+	color: #3D3D3D;
+	background-position: 50%;
+	background-repeat: no-repeat;
 	border-radius: 5px;
 	margin: 5px;
+	cursor: pointer;
 	text-align: center;
 	vertical-align: middle;
-	color: #fff;
-	cursor: pointer;
 	font-weight: bold;
-	
 }
-.upload-btns .btn[rel='send']{ background-color: #43C343;}
-.upload-btns .btn[rel='send']:hover { background-color: #00FF00; }
-.upload-btns .btn[rel='cancel']{ background-color: #EB4116;}
-.upload-btns .btn[rel='cancel']:hover { background-color: #FF0000; }
+.upload-btns .btn { float: right; width: 100px; color: #fff; }
+.img-actions .btn { float: right; }
+.img-menu .btn { float: left; }
+
+.btn[rel='resize']{ background-image: url('../img/resize_24.png'); }
+.btn[rel='rotatel']{ background-image: url('../img/rotate_left_24.png'); }
+.btn[rel='rotater']{ background-image: url('../img/rotate_right_24.png'); }
+.btn[rel='delete']{ background-image: url('../img/delete_24.png'); background-color: #E01200; }
+.btn[rel='send']{ background-color: #43C343;}
+.btn[rel='cancel']{ background-color: #EB4116;}
+
+.btn:hover { background-color: #FFD387; }
+.btn[rel='cancel']:hover { background-color: #FF0000; }
+.btn[rel='send']:hover { background-color: #00FF00; }
+.btn[rel='delete']:hover { background-color: #DD7A73; }

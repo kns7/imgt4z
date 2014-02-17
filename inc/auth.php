@@ -19,12 +19,19 @@ if(isset($_POST) && !empty($_POST['user'])){
 	/*
 	 * Du coup, mot de passe temporaire:
 	 * lat4zslpf (Les Admins T4Zone Sont Les Plus Beaux) ;)
+	 * 
+	 * Et pour les zozos modos:
+	 * User: modo
+	 * Mdp : VivalaZone1
 	 */
 	if($_POST['user'] == "Serialg" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
 		$user = new User('25549','Serialg','1');
 		header("Location: /");
 	}elseif($_POST['user'] == "jeb" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
 		$user = new User('2554','jeb','1');
+		header("Location: /");
+	}elseif($_POST['user'] == "modos" && md5($_POST['pwd']) == "6f85aa27462f8587a6bbb7beadb0e71b"){
+		$user = new User('25549','Modos','1');
 		header("Location: /");
 	}else{
 		$error = "Utilisateur et/ou mot de passe incorrects!";
@@ -44,8 +51,8 @@ if(isset($_POST) && !empty($_POST['user'])){
 			<div class="auth-logo"></div>
 			<form id="login" method="post">
 				<p>Merci de vous authentifier pour avoir acc&egrave;s &agrave; l'outil <strong>Images T4Zone</strong><br/>Vous devez pour cela, utiliser votre compte du <a href="http://t4zone.info/forum/">Forum T4zone</a>.</p>
-				<input type='text' id='user' name='user' value="nom d'utilisateur"/>
-				<input type='password' id='pwd' name='pwd' value="Password"/>
+				<input type='text' id='user' name='user' value="nom d'utilisateur"/><br/>
+				<input type='password' id='pwd' name='pwd' value="Password"/><br/>
 				<input type='submit' value="Connexion"/>
 			</form>
 			<?php

@@ -102,12 +102,28 @@ class Image {
 	}
 	
 	public function resize(){
+		$filename = "../storage/".$this->_userid."/".$this->_timestamp."d".$this->_userid.".jpg";
 		
 	}
 	
-	public function rotate($direction){
-		
+	public function rotate($rotation,$db){
+		$filename = "../storage/".$this->_userid."/".$this->_timestamp.".jpg";
+		switch($rotation){
+			case "L": $angle = 90; break;
+			case "R": $angle = -90; break;
+		}
+		/* Create Image object from JPEG File */
+		$source = imagecreatefromjpeg($filename);
+		/* Rotate Image object */
+		$rotate = imagerotate($source, $angle, 0);
+		/* Save image object as JPEG */
+		imagejpeg($rotate, $filename, 100);
+		/* Destroy temp images */
+		imagedestroy($source);
+		imagedestroy($rotate);
+		/* Update Image "Rotation" Info in DB */
+		$return = $db->updateOrientation($this);
+		return $return;
 	}
 }
-
 ?>
