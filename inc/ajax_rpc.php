@@ -18,6 +18,35 @@ $categoriesManager = new CategoriesManager($conn_img);
 if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['action'])){
 	$rArray = array();
 	switch($_POST['action']){
+		case "initload":
+			$images = $imagesManager->getList($_SESSION['user_id']);
+			$count = $imagesManager->count($_SESSION['user_id']);
+			$rArray['count'] = $count;
+			if(!empty($images)){
+				$i = 0;
+				foreach($images as $image){
+					$rArray['images'][$i]['id'] = $image->id();
+					$rArray['images'][$i]['timestamp'] = $image->timestamp();
+					$rArray['images'][$i]['title'] = $image->title();
+					$rArray['images'][$i]['orientation'] = $image->orientation();
+					$rArray['images'][$i]['categorie'] = $image->categorieid();
+					$rArray['images'][$i]['dateadd'] = $image->dateadd();
+					$rArray['images'][$i]['userid'] = $image->userid();
+					$i++;
+				}
+			}
+			$categories = $categoriesManager->getList();
+			if(!empty($categories)){
+				$i = 0;
+				foreach($categories as $categorie){
+					$rArray['categories'][$i]['id'] = $categorie->id();
+					$rArray['categories'][$i]['name'] = $categorie->name();
+					$i++;
+				}
+			}
+			$rArray['help']['upload'] = "<p>Via ce formulaire, tu peux envoyer une image sur T4Zone Images.<br/>Les formats d'images acceptés sont les suivants: JPEG, PNG et GIF.</p><p>L'image sera automatiquement redimensionnée en 800x600 (ou 600x800), un Watermark (Tatouage Numérique) sera ajouté à l'image et enfin un lien sera automatiquement généré pour pouvoir la poster sur le forum.<br/>Si l'image est mal orientée, il te sera possible une fois envoyée, de la faire tourner pour la mettre dans le bon sens!</p><p><em>S'il devait y avoir un problème lors de l'envoi, merci de contacter les admins du Forum T4Zone <a href='mailto:admin@t4zone.org?subject=Erreur Upload T4Zone Images'>admins@t4zone.org</a></em></p>";
+		break;
+		
 		case "logout":
 			session_destroy();
 		break;
@@ -32,6 +61,15 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 			$rArray['template'] = "upload";
 			$rArray['help'] = "<p>Via ce formulaire, tu peux envoyer une image sur T4Zone Images.<br/>Les formats d'images acceptés sont les suivants: JPEG, PNG et GIF.</p><p>L'image sera automatiquement redimensionnée en 800x600 (ou 600x800), un Watermark (Tatouage Numérique) sera ajouté à l'image et enfin un lien sera automatiquement généré pour pouvoir la poster sur le forum.<br/>Si l'image est mal orientée, il te sera possible une fois envoyée, de la faire tourner pour la mettre dans le bon sens!</p><p><em>S'il devait y avoir un problème lors de l'envoi, merci de contacter les admins du Forum T4Zone <a href='mailto:admin@t4zone.org?subject=Erreur Upload T4Zone Images'>admins@t4zone.org</a></em></p>";
 			/* Get Categories List */
+			$categories = $categoriesManager->getList();
+			if(!empty($categories)){
+				$i = 0;
+				foreach($categories as $categorie){
+					$rArray['categories'][$i]['id'] = $categorie->id();
+					$rArray['categories'][$i]['name'] = $categorie->name();
+					$i++;
+				}
+			}
 			$categories = $categoriesManager->getList();
 			if(!empty($categories)){
 				$i = 0;
@@ -62,7 +100,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 					$rArray['images'][$i]['timestamp'] = $image->timestamp();
 					$rArray['images'][$i]['title'] = $image->title();
 					$rArray['images'][$i]['orientation'] = $image->orientation();
-					$rArray['images'][$i]['categorie'] = $image->categorie();
+					$rArray['images'][$i]['categorie'] = $image->categorieid();
 					$rArray['images'][$i]['dateadd'] = $image->dateadd();
 					$rArray['images'][$i]['userid'] = $image->userid();
 					$i++;

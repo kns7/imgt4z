@@ -28,6 +28,26 @@ a {
 	text-align: center;
 }
 
+.categorie-icon {
+	background-color: transparent;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-image: url('../img/categories/32/cat_1.png');
+	width: 32px;
+	height: 32px;
+	margin: 0px 10px 0px 0px;
+	float: left;
+}
+.cat-icon {
+	background-color: transparent;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-image: url('../img/categories/16/cat_1.png');
+	width: 16px;
+	height: 16px;
+	float: left;
+}
+
 /* Authentication Form */
 .auth-form {
 	width: 210px;
@@ -257,13 +277,25 @@ table td input[type=text]:focus, table td textarea:focus, table td select:focus 
 	font-weight: bold;
 	color: #808080;
 	font-size: 12px;
-	width: 160px;
+	width: 140px;
 	display: inline;
 	float: left;
 	margin: 5px 0px 0px 0px;
 	line-height: 20px;
 	padding-top: 6px;
+	text-align: left;
+	padding-left: 20px;
+	background-color: transparent;
+	background-position: 0px 7px;
+	background-repeat: no-repeat;
 }
+.img-bloc .infos .title[rel='1']{background-image: url('../img/categories/16/cat_1.png');}
+.img-bloc .infos .title[rel='2']{background-image: url('../img/categories/16/cat_2.png');}
+.img-bloc .infos .title[rel='3']{background-image: url('../img/categories/16/cat_3.png');}
+.img-bloc .infos .title[rel='4']{background-image: url('../img/categories/16/cat_4.png');}
+.img-bloc .infos .title[rel='5']{background-image: url('../img/categories/16/cat_5.png');}
+.img-bloc .infos .title[rel='6']{background-image: url('../img/categories/16/cat_6.png');}
+
 .img-bloc .infos .title em {
 	font-size: 11px;
 	font-weight: normal;
