@@ -3,6 +3,7 @@ session_start();
 /* Include Config File */
 include('config.php');
 /* Include Classes */
+include('class/UsersManager.class.php');
 include('class/CategoriesManager.class.php');
 include('class/ImagesManager.class.php');
 include('class/User.class.php');
@@ -13,12 +14,16 @@ include('class/Image.class.php');
 $imagesManager = new ImagesManager($conn_img);
 /* Create PDO Connector for Categories */
 $categoriesManager = new CategoriesManager($conn_img);
+/* Create PDO Connector for Users */
+$usersManager = new UsersManager($conn_img);
 
 /* Check if User is logged */
 if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['action'])){
+	$user = $usersManager->get($_SESSION['user_id']);
 	$rArray = array();
 	switch($_POST['action']){
 		case "initload":
+			/* Images */
 			$images = $imagesManager->getList($_SESSION['user_id']);
 			$count = $imagesManager->count($_SESSION['user_id']);
 			$rArray['count'] = $count;
@@ -35,6 +40,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 					$i++;
 				}
 			}
+			/* Categories */
 			$categories = $categoriesManager->getList();
 			if(!empty($categories)){
 				$i = 0;
@@ -44,7 +50,12 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 					$i++;
 				}
 			}
+			/* Textes d'aide */
 			$rArray['help']['upload'] = "<p>Via ce formulaire, tu peux envoyer une image sur T4Zone Images.<br/>Les formats d'images acceptés sont les suivants: JPEG, PNG et GIF.</p><p>L'image sera automatiquement redimensionnée en 800x600 (ou 600x800), un Watermark (Tatouage Numérique) sera ajouté à l'image et enfin un lien sera automatiquement généré pour pouvoir la poster sur le forum.<br/>Si l'image est mal orientée, il te sera possible une fois envoyée, de la faire tourner pour la mettre dans le bon sens!</p><p><em>S'il devait y avoir un problème lors de l'envoi, merci de contacter les admins du Forum T4Zone <a href='mailto:admin@t4zone.org?subject=Erreur Upload T4Zone Images'>admins@t4zone.org</a></em></p>";
+			/* User Settings */
+			$rArray['user']['field'] = $_SESSION['user_field'];
+			$rArray['user']['ordre'] = $_SESSION['user_ordre'];
+			$rArray['user']['step'] = $_SESSION['user_step'];
 		break;
 		
 		case "logout":
@@ -178,6 +189,13 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 			}else{
 				$rArray['result'] = 0;
 			}
+		break;
+		
+		case "usersettings":
+			if(isset($_POST['field'])){ $user->setField($_POST['field']); $_SESSION['user_field'] = $_POST['field']; }
+			if(isset($_POST['ordre'])){ $user->setAsc($_POST['ordre']); $_SESSION['user_ordre'] = $_POST['ordre']; }
+			if(isset($_POST['step'])){ $user->setStep($_POST['step']); $_SESSION['user_step'] = $_POST['step']; }
+			$usersManager->update($user);
 		break;
 	}
 	echo json_encode($rArray);

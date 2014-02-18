@@ -7,62 +7,82 @@ class User {
 	private $_id;
 	private $_name;
 	private $_admin = 0;
+	private $_step = 10;
+	private $_field = "dateadd";
+	private $_ordre = "DESC";
 	
 	/**
 	 * Build a new User object
-	 * @param int $id		User ID
-	 * @param string $name	Username
-	 * @param int $admin	1: is admin, 0: is not admin
+	 * @param array	$datas Array of collected Datas (from PDO)
 	 */
-	public function __construct($id,$name,$admin){
-		$this->_admin = $admin;
-		$this->_id = $id;
-		$this->_name = $name;
+	public function __construct(array $datas) {
+		$this->hydrate($datas);
 		$this->login();
 	}
 	/**
-	 * Get User ID
-	 * @return int User ID
+	 * Hydrate datas for a new object
+	 * @param array $datas Array of datas 
 	 */
-	public function getId(){ return $this->_id; }
-	/**
-	 * Get Username 
-	 * @return string Username
-	 */
-	public function getName(){ return $this->_name; }
-	/**
-	 * Get if User is admin or not
-	 * @return boolean true: Admin, false: notadmin
-	 */
-	public function getAdmin(){ return $this->_admin; }
+	public function hydrate(array $datas){
+		foreach ($datas as $key => $value){
+			$method = 'set'.ucfirst($key);
+			if (method_exists($this, $method)){
+				$this->$method($value);
+			}
+		}
+	}
 	
-	/**
-	 * Set User ID
-	 * @param int $val UserID
-	 */
-	public function setId($val){ $this->_id = $val; }
-	/**
-	 * Set Username
-	 * @param string $val Username
-	 */
-	public function setName($val){ $this->_name = $val; }
-	/**
-	 * Set user Admin or not
-	 * @param int $val 1: admin, 0: not admin
-	 */
-	public function setAdmin($val){ if($val == 1) { $this->_admin = true; }else{ $this->_admin = false;} }
 	
-	/**
-	 * Set $_SESSION vars with users infos (ID, Username, Admin)
-	 */
+	public function id(){ return $this->_id; }
+	public function name(){ return $this->_name; }
+	public function admin(){ return $this->_admin; }
+	public function step(){ return $this->_step; }
+	public function field(){ return $this->_field; }
+	public function ordre(){ return $this->_ordre; }
+	
+	public function setId($val){ 
+		$val = (int) $val;
+		if(is_int($val)){
+			$this->_id = $val; 
+		}
+	}
+	public function setName($val){ 
+		if(is_string($val)){
+			$this->_name = $val; 
+		}
+	}
+	public function setAdmin($val){ 
+		$val = (int) $val;
+		if(is_int($val)){
+			$this->_admin = $val; 
+		}
+	}
+	public function setStep($val){ 
+		$val = (int) $val;
+		if(is_int($val)){
+			$this->_step = $val; 
+		}
+	}
+	public function setField($val){ 
+		if(is_string($val)){
+			$this->_field = $val; 
+		}
+	}
+	public function setAsc($val){ 
+		if(is_string($val)){
+			$this->_ordre = $val; 
+		}
+	}
+	
 	private function login(){
 		$_SESSION['user_id'] = $this->_id;
 		$_SESSION['user_name'] = $this->_name;
 		$_SESSION['user_admin'] = $this->_admin;
+		$_SESSION['user_field'] = $this->_field;
+		$_SESSION['user_ordre'] = $this->_ordre;
+		$_SESSION['user_step'] = $this->_step;
 	}
-	/**
-	 * Logout User, destroy $_SESSION variable
-	 */
+	
 	public function logout(){
 		session_destroy();
 	}

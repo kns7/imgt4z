@@ -25,13 +25,13 @@ if(isset($_POST) && !empty($_POST['user'])){
 	 * Mdp : VivalaZone1
 	 */
 	if($_POST['user'] == "Serialg" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
-		$user = new User('25549','Serialg','1');
+		$user = $usersManager->get('25549');
 		header("Location: /");
 	}elseif($_POST['user'] == "jeb" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
-		$user = new User('2554','jeb','1');
+		$user = $usersManager->get('2554');
 		header("Location: /");
 	}elseif($_POST['user'] == "modos" && md5($_POST['pwd']) == "6f85aa27462f8587a6bbb7beadb0e71b"){
-		$user = new User('25549','Modos','1');
+		$user = $usersManager->get('25548');
 		header("Location: /");
 	}else{
 		$error = "Utilisateur et/ou mot de passe incorrects!";

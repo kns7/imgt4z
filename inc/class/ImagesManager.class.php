@@ -24,7 +24,7 @@ class ImagesManager{
 	}
 	
 	public function count($userid){
-		$q = $this->_db->prepare("SELECT COUNT(id) as count FROM images WHERE userid = :userid");
+		$q = $this->_db->prepare("SELECT COUNT(id) as total FROM images WHERE userid = :userid");
 		$q->bindValue(':userid',$userid);
 		$q->execute();
 		

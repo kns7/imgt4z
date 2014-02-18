@@ -3,16 +3,18 @@ session_start();
 /* Include Config File */
 include('inc/config.php');
 /* Include Classes */
+include('inc/class/UsersManager.class.php');
 include('inc/class/CategoriesManager.class.php');
 include('inc/class/ImagesManager.class.php');
 include('inc/class/User.class.php');
 include('inc/class/Image.class.php');
 include('inc/class/Categorie.class.php');
+$usersManager = new UsersManager($conn_img);
 /* Check if User is logged */
 if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){ 
 	include('inc/auth.php');
 }else{
-	$user = new User($_SESSION['user_id'],$_SESSION['user_name'],$_SESSION['user_admin']);
+	$user = $usersManager->get($_SESSION['user_id']);
 }
 ?>
 <html lang="fr">

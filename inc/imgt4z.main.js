@@ -3,13 +3,26 @@ Pour l'upload AJAX:
 http://www.script-tutorials.com/pure-html5-file-upload/
 */
 
-var rpcfile = "inc/ajax_rpc.php";
-var jsonarray;
-var currentimage;
+var rpcfile = "inc/ajax_rpc.php"; /* Fichier PHP pour les requêtes AJAX */
+var jsonarray = new Object(); /* JSON Array avec toutes les informations (Images/Categories/Help) */
+var currentimage = new Object(); /* Image Actuelle */
+
+var pagination = new Object(); /* Informations de Pagination des images */
+pagination.step = 10;
+pagination.start = 0;
+pagination.end = 10;
+
+var ordre = new Object(); /* Ordre d'affichage des images */
+ordre.field = "dateadd";
+ordre.asc = "desc";
+
+$(window).on("resize",function(){ resizeBlocs(); });
 
 $(document).ready(function(){
-	reload_json();
-	/* Menu actions (click) */
+	resizeBlocs();
+	reloadJson();
+	
+	/* Actions du menu principal */
 	$(document).on("click",".menu",function(){
 		var action = $(this).attr('rel');
 		$(".menu").removeClass("active");
@@ -17,7 +30,8 @@ $(document).ready(function(){
 		/* On construit le template en Javascript */
 		buildTemplate(action);
 	})
-	/* Images Gallery (Click on an image) */
+	
+	/* Edition d'une image, clic sur une image de la galerie */
 	.on("click",".img-bloc",function(){
 		$(".loader").fadeIn();
 		var imgid = $(this).attr('id').split("_");
@@ -26,9 +40,11 @@ $(document).ready(function(){
 		$("#global").removeClass().hide().html("");
 		buildTemplate(action,imgid[1]);
 	})
-	.on("click","textarea",function(){
-		this.select();
-	})
+	
+	/* Selectionner le texte en cliquant sur le Textarea */
+	.on("click","textarea",function(){ this.select(); })
+	
+	/* Sauvegarder les changements de categorie et titre */
 	.on("change","#imagecategorie,#imagetitle",function(){
 		var imgid = $("#imageid").val();
 		var what = $(this).attr('id');
@@ -41,7 +57,7 @@ $(document).ready(function(){
 			imgid: imgid,
 			val: val
 		},function(data){
-			reload_json();
+			reloadJson();
 			var d = JSON.parse(data);
 			if(d.result == 1){
 				if(what == "imagecategorie"){ $(".categorie-icon").css({'background-image': "url('../img/categories/32/cat_"+val+".png')"}); }
@@ -52,63 +68,98 @@ $(document).ready(function(){
 			$(".loader").fadeOut();
 		});
 	})
+	
+	/* Action en cliquant sur un bouton */
 	.on("click",".btn",function(){
-		var what = $(this).attr('rel');
-		/* On test si le bouton a l'attribut rev qui contient l'ID de l'image, sinon on prend le input caché #imageid */
-		if(typeof($(this).attr('rev')) != "undefined"){ var imgid = $(this).attr('rev'); }else{ var imgid = $("#imageid").val(); }
-		if( what != "resize"){
-			if(what == "delete" && confirm("Veux-tu définitivement supprimer cette image?") || what == "rotatel" || what == 'rotater'){
-				$(".loader").fadeIn();
-				$(".overlay").show();
-				$.post(rpcfile,{
-					action: 'btn',
-					what: what,
-					imgid: imgid
-				},function(data){
-					reload_json();
-					d = JSON.parse(data);
-					switch(what){
-						case "rotatel":
-						case "rotater":
-							var timestamp = Math.round(+new Date() / 1000);
-							$("#imgpreview").attr('src', d.url+"?t="+timestamp).css({width: d.width+"px", height: d.height+"px"});
-						break;
-						
-						case "delete":
-							if(d.result == 1){
-								$("#global").removeClass().hide().html("");
-								buildTemplate('images');
-							}else{
-								
-							}
-						break;
-					}
-					$(".overlay").hide();
-					$(".loader").fadeOut();
-				})
-			}else{
-				return false;
-			}
-		}else{
-			/* Only resize Image Preview */
-			console.log("Resizing. Original Width: "+$("#imgpreview").width());
+		if(!($(this).hasClass('disable'))){
+			console.log("Clicked on a Button: ");
 			$(".loader").fadeIn();
-			switch($("#imgpreview").width()){
-				case 400: w = "800px"; h = "600px"; break;
-				case 300: w = "600px"; h = "800px"; break;
-				case 800: w = "400px"; h = "300px"; break;
-				case 600: w = "300px"; h = "400px"; break;
+			if($(this).hasClass("withoverlay")){ $(".overlay").show(); }
+			var what = $(this).attr('rel');
+			/* On test si le bouton a l'attribut rev qui contient l'ID de l'image, sinon on prend le input caché #imageid */
+			if(typeof($(this).attr('rev')) != "undefined"){ var imgid = $(this).attr('rev'); }else{ var imgid = $("#imageid").val(); }
+			switch(what){
+				case "resize":
+					/* Redimensionnement de l'image */
+					console.log("  => Resizing image preview");
+					switch($("#imgpreview").width()){
+						case 400: w = "800px"; h = "600px"; break;
+						case 300: w = "600px"; h = "800px"; break;
+						case 800: w = "400px"; h = "300px"; break;
+						case 600: w = "300px"; h = "400px"; break;
+					}
+					$("#imgpreview").css({width: w, height: h});
+					$(".loader").fadeOut();
+				break;
+
+				case "rotatel":
+				case "rotater":
+					/* Rotation de l'image */
+					console.log("  => Rotating image");
+					$.post(rpcfile,{ action: 'btn', what: what, imgid: imgid },function(data){
+						reloadJson();
+						d = JSON.parse(data);
+						var timestamp = Math.round(+new Date() / 1000);
+						$("#imgpreview").attr('src', d.url+"?t="+timestamp).css({width: d.width+"px", height: d.height+"px"});
+						$(".overlay").hide();
+						$(".loader").fadeOut();
+					});
+				break;
+
+				case "delete":
+					/* Suppression de l'image */
+					if(confirm("Veux-tu définitivement supprimer cette image?")){
+						console.log("  => Deleting image");
+						$.post(rpcfile,{ action: 'btn', what: what, imgid: imgid },function(data){
+							reloadJson();
+							d = JSON.parse(data);
+							if(d.result == 1){
+								buildTemplate('images');
+							}
+						});
+					}else{
+						return false;
+					}
+				break;
+
+				case "show":
+					/* Reglage du nombre d'images affichées */
+					$(".btn[rel='show']").removeClass('active');
+					$(this).addClass('active');
+					pagination.step = Math.round($(this).attr('amount'));
+					/* Update User Settings */
+					$.post(rpcfile,{action: 'usersettings', step: pagination.step});
+					buildTemplate('images');
+				break;
+
+				case "next":
+					/* Afficher les images suivantes */
+					pagination.start = Math.round(pagination.start + pagination.step);
+					pagination.end = Math.round(pagination.end + pagination.step);
+					buildTemplate('images');
+				break;
+
+				case "prev":
+					/* Afficher les images précédentes */
+					pagination.start = Math.round(pagination.start - pagination.step);
+					pagination.end = Math.round(pagination.end - pagination.step);
+					buildTemplate('images');
+				break;
+				
+				case "filter":
+					
+				break;
 			}
-			$("#imgpreview").css({width: w, height: h});
-			$(".loader").fadeOut();
 		}
 	})
+	
+	/* Changement de l'icone Categorie en changeant le select */
 	.on("change","#image-categorie",function(){
 		$(".categorie-icon").css({'background-image': "url('../img/categories/32/cat_"+$(this).val()+".png')"});
 	})
 });
 
-/* Functions */
+/* Fonctions */
 function buildTemplate(template,id){
 	console.log("Call function *buildTemplate* => ["+template+"]");
 	$(".loader").fadeIn();
@@ -118,8 +169,15 @@ function buildTemplate(template,id){
 	switch(template){
 		case "images":
 			if(d.images.length > 0){
+				pagination.end = Math.round(pagination.start + pagination.step);
 				var timestamp = Math.round(+new Date() / 1000);
-				for(var i = 0; i < d.images.length; i++){
+				if(pagination.end > d.images.length){
+					var limit = d.images.length;
+				}else{
+					var limit = pagination.end;
+				}
+				console.log("  => Affichage des Images depuis "+pagination.start +" jusqu'à "+ pagination.end);
+				for(var i = pagination.start; i < limit; i++){
 					var image = d.images[i];
 					/* Test if Title is filled */
 					if(image.title == ""){ var title = "Sans Titre"; }else{ var title = image.title; }
@@ -145,6 +203,28 @@ function buildTemplate(template,id){
 					});
 					$("#global").append(imgbloc);
 					$("#image_"+image.id).append(img,infos);
+				}
+				var clear = $("<div>",{ class: 'clear'});
+				var imgmenu = $("<div>",{ class: 'img-menu', text: d.count.total +' images'});
+				var btnfilter = $("<div>",{class: 'btn', rel: 'filter'});
+				var btnshow10 = $("<div>",{class: 'btn', rel: 'show', amount: '10'});
+				var btnshow20 = $("<div>",{class: 'btn', rel: 'show', amount: '20'});
+				var btnshow50 = $("<div>",{class: 'btn', rel: 'show', amount: '50'});
+				var imgnext = $("<div>",{class: "btn", rel: "next", html: "Suivant"});
+				var imgprev = $("<div>",{class: "btn", rel: "prev", html: "Précédent"});
+				var boxfilter = $("<div>",{class: "filter-box"});
+				
+				imgmenu.append(btnshow10,btnshow20,btnshow50,imgnext,imgprev);
+				resizeBlocs();
+				$("#global").append(clear,imgmenu);
+				/* Activer le bouton du nombre d'images */
+				$(".btn[amount="+pagination.step+"]").addClass('active');
+				/* Desactiver Prev ou Next en fonction */
+				if(pagination.start == 0){
+					$(".btn[rel='prev']").addClass('disable');
+				}
+				if(pagination.end >= d.images.length){
+					$(".btn[rel='next']").addClass('disable');
 				}
 			}else{
 				$("#global").append("<div class='noresults'>Tu n'as aucune image dans ta bibliothèque!</div>");
@@ -173,21 +253,23 @@ function buildTemplate(template,id){
 				var img = $("<img>",{ id: "imgpreview", src: '/storage/'+currentimage.userid+'/'+currentimage.timestamp+'.jpg?t='+timestamp}).css({width: w+"px", height: h+"px"});
 				var imgctrl = $("<div>",{class: "img-ctrl"});
 				var imgedit = $("<div>",{class: "img-edit", html: "<table></table>"});
+				var imgprev = $("<div>",{class: "img-prev", image: ""});
+				var imgnext = $("<div>",{class: "img-next", image: ""});
 				
 				/* Buttons for Actions */
 				var imgactions = $("<div>",{class: "img-actions"});
-				var btndelete = $("<div>",{class: "btn", rel: "delete"});
-				var btnrotater = $("<div>",{class: "btn", rel: "rotater"});
-				var btnrotatel = $("<div>",{class: "btn", rel: "rotatel"});
+				var btndelete = $("<div>",{class: "btn withoverlay", rel: "delete"});
+				var btnrotater = $("<div>",{class: "btn withoverlay", rel: "rotater"});
+				var btnrotatel = $("<div>",{class: "btn withoverlay", rel: "rotatel"});
 				var btnresize = $("<div>",{class: "btn", rel: "resize"});
 				var imgid = $("<input>",{id: "imageid", value: currentimage.id, type: "hidden"});
 				
 				/* Categories */
 				var select = $("<select>",{id: "imagecategorie"});
-				if(jsonarray.categories.length > 0){
-					for(var i = 0; i < jsonarray.categories.length; i++){
-						var categorie = jsonarray.categories[i];
-						if(categorie.id == currentimage.categorieid){
+				if(d.categories.length > 0){
+					for(var i = 0; i < d.categories.length; i++){
+						var categorie = d.categories[i];
+						if(categorie.id == currentimage.categorie){
 							var option = $("<option>",{ value: categorie.id, text: categorie.name, selected: 'selected' });
 						}else{ 
 							var option = $("<option>",{ value: categorie.id, text: categorie.name });
@@ -211,7 +293,7 @@ function buildTemplate(template,id){
 		break;
 		
 		case "upload":
-			var help = $("<article>",{
+			var helpbox = $("<article>",{
 				class: "help",
 				html: d.help.upload
 			});
@@ -235,7 +317,7 @@ function buildTemplate(template,id){
 					select.append(option);
 				}
 			}
-			$("#global").append(help,uploadform,btns);
+			$("#global").append(helpbox,uploadform,btns);
 			$("table").append("<tr><th>Fichier image</th><td><input type='file' id='image-file'/></td></tr>");
 			$("table").append("<tr><th>Titre</th><td><input type='text' id='image-title' value=''/></td></tr>");
 			$("table").append("<tr><th>Catégorie</th><td id='selection'><div class='categorie-icon'></div></td></tr>");
@@ -245,7 +327,7 @@ function buildTemplate(template,id){
 		case "logout":
 			/* On envoie une requete au PHP pour destruction de la session */
 			$.post(rpcfile,{
-				action: action
+				action: 'logout'
 			},function(data){
 				/* Reloading after logout */
 				$(".loader").fadeOut();
@@ -260,12 +342,53 @@ function buildTemplate(template,id){
 	}
 	$(".loader").fadeOut({complete:function(){
 		$("#global").show();
+		resizeBlocs();
 	}});
 }
-function reload_json(){
+
+function reloadJson(){
+	console.log("Call function *reloadJson*");
+	$(".overlay").show();
+	$(".loader").fadeIn();
 	$.post(rpcfile,{ 
 		action: 'initload'
 	},function(data){
 		jsonarray = JSON.parse(data);
+		pagination.step = jsonarray.user.step;
+		ordre.asc = jsonarray.user.ordre;
+		ordre.field = jsonarray.user.field;
+		console.log("JSON Array reloaded!");
+		$(".overlay").hide();
+		$(".loader").fadeOut();
 	});
+}
+
+function resizeBlocs(){
+	var gwidth = $("#global").width();
+	var gheight = $("#global").height();
+	var wwidth = $(window).width();
+	var wheight = $(window).height();
+	$(".img-menu").css({width: Math.floor(gwidth - 6)+"px"});
+	$(".loader").css({left: Math.floor((wwidth - 78)/2)+"px", top: Math.floor((wheight - 78)/2)+"px"});
+}
+
+function dump(arr,level){
+	var dumped_text = "";
+	if(!level) level = 0;
+	var level_padding = "";
+	for(var j=0;j<level+1;j++) level_padding += "    ";
+	if(typeof(arr) == 'object'){
+		for(var item in arr){
+			var value = arr[item];
+			if(typeof(value) == 'object'){ 
+				dumped_text += level_padding + "'" + item + "' ...\n";
+				dumped_text += dump(value,level+1);
+			}else{
+				dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
+			}
+		}
+	}else{
+		dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
+	}
+	return dumped_text;
 }

@@ -117,6 +117,8 @@ a {
 	color: #ececec;
 	background-color: #212121;
 	border-color: #808080;
+	width: 78px;
+	height: 15px;
 }
 .overlay {
 	position: absolute;
@@ -172,6 +174,7 @@ nav ul .menu:hover,nav ul li.active { background-color: #010101; }
 #global{
 	margin-left: 100px;
 	padding: 0px 20px;
+	margin-bottom: 72px;
 }
 #global article {
 	padding: 10px;
@@ -239,11 +242,17 @@ table td input[type=text]:focus, table td textarea:focus, table td select:focus 
 	
 }
 .img-menu {
-	background: white;
+	background: #212121;
 	border-radius: 5px;
-	margin: 10px auto;
 	padding: 10px;
-	width: 70%;
+	width: 850px;
+	position: fixed;
+	bottom: 5px;
+	left: 115px;
+	opacity: 0.95;
+	color: #ff9900;
+	text-align: center;
+	line-height: 42px;
 }
 
 .images .img-bloc {
@@ -309,9 +318,11 @@ table td input[type=text]:focus, table td textarea:focus, table td select:focus 
 	display: inline;
 	float: left;
 	margin: 20px 0px 0px 20px;
+	opacity: 0.5;
 }
 .img-bloc .infos .delete:hover {
 	background-color: #E01200;
+	opacity: 0.8;
 }
 .img-detail{
 	width: 800px;
@@ -374,8 +385,14 @@ table td input[type=text]:focus, table td textarea:focus, table td select:focus 
 .btn[rel='delete']{ background-image: url('../img/delete_24.png'); background-color: #E01200; }
 .btn[rel='send']{ background-color: #43C343;}
 .btn[rel='cancel']{ background-color: #EB4116;}
-
+.btn[rel='filter']{ background-image: url('../img/filter_24.png'); }
+.btn[rel='show'][amount='10']{ background-image: url('../img/show10_24.png'); margin-left: 30px; }
+.btn[rel='show'][amount='20']{ background-image: url('../img/show20_24.png'); }
+.btn[rel='show'][amount='50']{ background-image: url('../img/show50_24.png'); }
+.btn[rel='prev'], .btn[rel='next']{ width: 80px; float: right; }
 .btn:hover { background-color: #FFD387; }
 .btn[rel='cancel']:hover { background-color: #FF0000; }
 .btn[rel='send']:hover { background-color: #00FF00; }
 .btn[rel='delete']:hover { background-color: #DD7A73; }
+.btn.active { background-color: #FFD387; }
+.btn.disable { background-color: #917E5F; cursor: normal; opacity: 0.5;}
