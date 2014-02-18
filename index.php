@@ -20,6 +20,7 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 <html lang="fr">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="user-scalable=no, initial-scale = 1, minimum-scale = 1, maximum-scale = 1, width=device-width">
 		<meta name="robots" content="noindex,nofollow,noarchive">
 		<meta name="google" content="noimageindex">
 		<meta name="msnbot" content="noimageindex">
@@ -27,12 +28,14 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 		<meta name="Slurp" content="noimageindex">
 		<link rel="shortcut icon" href="favicon.ico"/>
 		<link rel="icon" href="favicon.ico"/>
-		<link rel="stylesheet" href="css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="css/style.css" media="screen"/>
 		<title>T4Zone Images</title>
 	</head>
 	<body>
+		<div id="showmenu"></div>
 		<nav>
 			<ul>
+				<li class='menu' rel='back'>CACHER MENU</li>
 				<li class='menu active' rel='home'>ACCUEIL</li>
 				<li class='menu' rel='upload'>UPLOADER</li>
 				<li class='menu' rel='images'>MES IMAGES</li>

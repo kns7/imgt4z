@@ -25,10 +25,23 @@ $(document).ready(function(){
 	/* Actions du menu principal */
 	$(document).on("click",".menu",function(){
 		var action = $(this).attr('rel');
-		$(".menu").removeClass("active");
-		$(this).addClass('active');
-		/* On construit le template en Javascript */
-		buildTemplate(action);
+		if(action == "back"){
+			console.log("Hide Menu");
+			$("nav").animate({left: "-=100px"},100,function(){$("#showmenu").fadeIn(50);});
+			$("#global").animate({marginLeft: "-=100px"},100);
+		}else{
+			$(".menu").removeClass("active");
+			$(this).addClass('active');
+			/* On construit le template en Javascript */
+			buildTemplate(action);
+		}
+	})
+	
+	.on("click","#showmenu",function(){
+		console.log("Show Menu");
+		$("#global").animate({marginLeft: "+=100px"},100);
+		$("nav").animate({left: "+=100px"},100);
+		$("#showmenu").fadeOut(50);
 	})
 	
 	/* Edition d'une image, clic sur une image de la galerie */
