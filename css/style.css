@@ -462,7 +462,7 @@ table td input[type=text]:focus, table td textarea:focus, table td select:focus 
 	table th { text-align: center; }
 	table td input{ width: 228px; }
 	table td select { width: 186px; }
-	table td textarea { width: 228px; height: 60px; }
+	table td textarea { width: 228px; font-size: 8px;}
 	
 	.img-detail {
 		padding: 10px;

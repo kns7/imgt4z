@@ -53,7 +53,7 @@ $(document).ready(function(){
 	})
 	
 	/* Selectionner le texte en cliquant sur le Textarea */
-	.on("click","textarea",function(){ this.select(); })
+	.on("click","textarea",function(){ if(!smartphone){ this.select();} })
 	
 	/* Sauvegarder les changements de categorie et titre */
 	.on("change","#imagecategorie,#imagetitle",function(){
