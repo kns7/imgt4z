@@ -213,6 +213,29 @@ nav ul .menu:hover,nav ul li.active { background-color: #010101; }
 	margin: 5px 0px;
 }
 
+#uploadoutput {
+	margin: 10px 40px;
+	padding: 20px;
+	border-radius: 5px;
+	text-align: center;
+	font-weight: bold;
+}
+.warning {
+	color: #555;
+	background-color: #FFD387;
+	border: 1px solid #ff9900;
+}
+.error {
+	color: #555;
+	background-color: #FF5F47;
+	border: 1px solid #FF050D;
+}
+.success {
+	color: #555;
+	background-color: #59D387;
+	border: 1px solid #43D100;
+}
+
 /* Formulaires */
 table {
 	border: 0px solid;

@@ -195,6 +195,10 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 			if(isset($_POST['step'])){ $user->setStep($_POST['step']); $_SESSION['user_step'] = $_POST['step']; }
 			$usersManager->update($user);
 		break;
+		
+		case "imageupload":
+			$rArray['upload'] = "Prout!";
+		break;
 	}
 	echo json_encode($rArray);
 }

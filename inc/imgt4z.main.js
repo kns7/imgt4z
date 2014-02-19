@@ -11,6 +11,7 @@ var pagination = new Object(); /* Informations de Pagination des images */
 pagination.step = 10;
 pagination.start = 0;
 pagination.end = 10;
+var maxuploadsize = 5242880;
 
 var ordre = new Object(); /* Ordre d'affichage des images */
 ordre.field = "dateadd";
@@ -83,10 +84,10 @@ $(document).ready(function(){
 	/* Action en cliquant sur un bouton */
 	.on("click",".btn",function(){
 		if(!($(this).hasClass('disable'))){
-			console.log("Clicked on a Button: ");
+			var what = $(this).attr('rel');
+			console.log("Clicked on a Button: ["+what+"]");
 			$(".loader").show();
 			if($(this).hasClass("withoverlay")){ $(".overlay").show(); }
-			var what = $(this).attr('rel');
 			/* On test si le bouton a l'attribut rev qui contient l'ID de l'image, sinon on prend le input caché #imageid */
 			if(typeof($(this).attr('rev')) != "undefined"){ var imgid = $(this).attr('rev'); }else{ var imgid = $("#imageid").val(); }
 			switch(what){
@@ -157,8 +158,15 @@ $(document).ready(function(){
 					buildTemplate('images');
 				break;
 				
-				case "filter":
-					
+				case "send":
+					/* Upload d'une photo */					
+					$('#upload_form').ajaxSubmit({ 
+						beforeSubmit:	uploadBeforeSubmit,
+						success:		uploadSuccess,
+						error:			uploadError,
+						resetForm:		true
+					});            
+					return false; 
 				break;
 			}
 		}
@@ -311,11 +319,11 @@ function buildTemplate(template,id){
 			});
 			var uploadform = $("<div>",{
 				class: "upload-form",
-				html: "<table></table>"
+				html: "<div id='uploadoutput'></div><form action='inc/ajax_rpc.php' method='post' enctype='multipart/form-data' id='upload_form'><input type='hidden' id='action' value='imageupload'/><table></table></form>"
 			});
 			var btns = $("<div>",{
 				class: "upload-btns",
-				html: "<div class='btn' rel='send'>Envoyer</div><div class='btn' rel='cancel'>Annuler</div><div class='clear'></div>"
+				html: "<div class='btn withoverlay' rel='send'>Envoyer</div><div class='btn' rel='cancel'>Annuler</div><div class='clear'></div>"
 			});
 			var select = $("<select>",{id: "image-categorie"});
 			if(d.categories.length > 0){
@@ -411,6 +419,53 @@ function hideshowMenu(show){
 		console.log($(".img-menu").css('margin-left'));
 		if($(".img-menu").length > 0 && $(".img-menu").css('margin-left') > '0px'){ $(".img-menu").animate({marginLeft: "-=100px"},100); }
 	}
+}
+
+function uploadError(){
+	console.log("Call function *uploadError*");
+	$("#uploadoutput").html("Il y a eu une erreur lors de la réception de ton image. Essaie encore une fois!").removeClass().addClass("error").show();
+	$(".overlay").hide();
+	$(".loader").fadeOut();
+}
+function uploadSuccess(){
+	console.log("Call function *uploadSuccess*");
+	$("#uploadoutput").html("L'image a bien été récupérée! Elle se trouve désormais dans tes images.").removeClass().addClass("success").show();
+	$(".overlay").hide();
+	$(".loader").fadeOut();
+}
+function uploadBeforeSubmit(){
+	console.log("Call function *uploadBeforeSubmit*");
+	$("#uploadoutput").html("").removeClass().hide();
+	if(window.File && window.FileReader && window.FileList && window.Blob){
+		var fsize = $('#image-file')[0].files[0].size;
+		var ftype = $('#image-file')[0].files[0].type;
+        /* Verifier le type de fichier */
+		switch(ftype){
+            case 'image/png': 
+            case 'image/gif': 
+            case 'image/jpeg':
+            break;
+			
+            default:
+				$("#uploadoutput").html("Le type de fichier '<b>"+ftype+"</b>' n'est pas autorisé!").addClass('warning').show();
+				$(".overlay").hide();
+				$(".loader").fadeOut();
+				return false;
+			break;
+		}
+       /* Verifier la taille du fichier */
+       if(fsize>maxuploadsize){
+         $("#uploadoutput").html("L'image est trop grosse!").addClass('warning').show();
+		 $(".overlay").hide();
+		 $(".loader").fadeOut();
+         return false;
+       }
+	}else{
+		$("#uploadoutput").html("Le navigateur devrait être mis à jour, il ne supporte pas les nouvelles version d'envoi de fichier.").addClass('warning').show();
+		$(".overlay").hide();
+		$(".loader").fadeOut();
+		return false;
+    }
 }
 
 function dump(arr,level){

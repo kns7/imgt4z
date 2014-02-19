@@ -52,5 +52,6 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 		<div class='overlay'></div>
 	</body>
 	<script type='text/javascript' src='inc/jquery-1.11.0.min.js'></script>
+	<script type='text/javascript' src='inc/jquery.form.min.js'></script>
 	<script type='text/javascript' src='inc/imgt4z.main.js'></script>
 </html>
