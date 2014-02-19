@@ -99,15 +99,14 @@ a {
 /* Main App */
 
 .loader {
-	position: absolute;
+	position: fixed;
 	top: 10px;
 	right: 10px;
 	z-index: 101;
 	background: transparent url('../img/ajax-loader.gif') 10px 50% no-repeat;
 	font-weight: 500;
 	font-size: 12px;
-	margin-top: 2px;
-	margin-right: 4px;
+	margin: 0px;
 	border-radius: 4px;
 	border: 1px solid silver;
 	padding: 15px;
@@ -133,7 +132,7 @@ a {
 }
 
 #showmenu {
-	position: absolute;
+	position: fixed;
 	z-index: 99;
 	top: 2px;
 	left: 2px;
@@ -143,10 +142,12 @@ a {
 	cursor: pointer;
 	border-radius: 5px;
 	border: 1px solid #212121;
+	opacity: 0.4;
 	display: none;
 }
 #showmenu:hover {
 	background-color: #212121;
+	opacity: 1;
 }
 
 nav {
@@ -182,7 +183,7 @@ nav ul .menu {
 	cursor: pointer;
 	font-size: 11px;
 }
-nav ul .menu[rel=back]{ background-image: url('../img/menu_back.png'); }
+nav ul .menu[rel=back]{ background-image: url('../img/menu_back.png'); display: none; }
 nav ul .menu[rel=upload]{ background-image: url('../img/menu_upload.png'); }
 nav ul .menu[rel=images]{ background-image: url('../img/menu_images.png'); }
 nav ul .menu[rel=home]{ background-image: url('../img/menu_home.png'); }
@@ -230,7 +231,7 @@ table th {
 	width: 150px;
 	padding: 2px;
 }
-table td input[type=text], table td textarea, table td select {
+table td input, table td textarea, table td select {
 	width: 90%;
 	height: 30px;
 	line-height: 30px;
@@ -352,6 +353,14 @@ table td input[type=text]:focus, table td textarea:focus, table td select:focus 
 	margin: 0px auto;
 	text-align: center;
 }
+#imgpreview.horizontal {
+	width: 400px;
+	height: 300px;
+}
+#imgpreview.vertical {
+	width: 300px;
+	height: 400px;
+}
 .img-ctrl {
 	position: relative;
 }
@@ -404,7 +413,7 @@ table td input[type=text]:focus, table td textarea:focus, table td select:focus 
 .btn[rel='send']{ background-color: #43C343;}
 .btn[rel='cancel']{ background-color: #EB4116;}
 .btn[rel='filter']{ background-image: url('../img/filter_24.png'); }
-.btn[rel='show'][amount='10']{ background-image: url('../img/show10_24.png'); margin-left: 30px; }
+.btn[rel='show'][amount='10']{ background-image: url('../img/show10_24.png'); }
 .btn[rel='show'][amount='20']{ background-image: url('../img/show20_24.png'); }
 .btn[rel='show'][amount='50']{ background-image: url('../img/show50_24.png'); }
 .btn[rel='prev'], .btn[rel='next']{ width: 80px; float: right; }
@@ -415,7 +424,66 @@ table td input[type=text]:focus, table td textarea:focus, table td select:focus 
 .btn.active { background-color: #FFD387; }
 .btn.disable { background-color: #917E5F; cursor: normal; opacity: 0.5;}
 
-@media screen and (max-width: 650px){
-	#global { padding: 0px 10px; }
+@media screen and (max-width: 320px){
+	body {
+		overflow-x: hidden;
+	}
+	.loader{
+		left: 90px;
+		top: 216px;
+	}
+	
+	nav ul .menu {
+		height: 94px;
+		padding-top: 0px;
+		color: transparent;
+		background-position: 50% 50%;
+	}
+	nav ul .menu[rel=back]{ display: block; }
+	
+	#global.images { 
+		padding-left: 40px; 
+		margin-bottom: 114px; 
+	}
+	#global.image {
+		padding: 10px;
+	}
+	
 	.images .img-bloc { margin: 5px; }
+	
+	.img-menu {
+		width: 248px;
+		left: 20px;
+	}
+	.help { width: 213px; }
+	.upload-form {width: 245px; }
+	.btn[rel='prev']{ margin-right: 64px; }
+	.btn[rel='cancel']{ margin-right: 30px; }
+	table th { text-align: center; }
+	table td input{ width: 228px; }
+	table td select { width: 186px; }
+	table td textarea { width: 228px; height: 60px; }
+	
+	.img-detail {
+		padding: 10px;
+		width: 265px;
+	}
+	#imgpreview.horizontal {
+		width: 265px;
+		height: 199px;
+	}
+	#imgpreview.vertical {
+		width: 199px;
+		height: 265px;
+	}
+	.img-edit { padding-top: 55px; }
+	.img-actions { top: 5px; right: 40px; }
+	.btn[rel='resize']{ display: none; }
+	.img-actions .btn { margin: 5px 15px; }
+}
+
+@media screen and (min-width: 321px) and (max-width: 649px){
+	html, body { min-height: 510px; }
+	
+	
 }

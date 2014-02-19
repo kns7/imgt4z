@@ -21,6 +21,9 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta name="viewport" content="user-scalable=no, initial-scale = 1, minimum-scale = 1, maximum-scale = 1, width=device-width">
+		<meta name=apple-mobile-web-app-capable content=yes>
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 		<meta name="robots" content="noindex,nofollow,noarchive">
 		<meta name="google" content="noimageindex">
 		<meta name="msnbot" content="noimageindex">

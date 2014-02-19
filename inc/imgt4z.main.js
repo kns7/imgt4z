@@ -6,7 +6,7 @@ http://www.script-tutorials.com/pure-html5-file-upload/
 var rpcfile = "inc/ajax_rpc.php"; /* Fichier PHP pour les requêtes AJAX */
 var jsonarray = new Object(); /* JSON Array avec toutes les informations (Images/Categories/Help) */
 var currentimage = new Object(); /* Image Actuelle */
-
+var smartphone = false; /* Navigation sur Smartphone? */
 var pagination = new Object(); /* Informations de Pagination des images */
 pagination.step = 10;
 pagination.start = 0;
@@ -26,27 +26,25 @@ $(document).ready(function(){
 	$(document).on("click",".menu",function(){
 		var action = $(this).attr('rel');
 		if(action == "back"){
-			console.log("Hide Menu");
-			$("nav").animate({left: "-=100px"},100,function(){$("#showmenu").fadeIn(50);});
-			$("#global").animate({marginLeft: "-=100px"},100);
+			hideshowMenu(false);
 		}else{
 			$(".menu").removeClass("active");
 			$(this).addClass('active');
 			/* On construit le template en Javascript */
 			buildTemplate(action);
+			if($(".menu[rel='back']").is(":visible")){
+				hideshowMenu(false);
+			}
 		}
 	})
 	
 	.on("click","#showmenu",function(){
-		console.log("Show Menu");
-		$("#global").animate({marginLeft: "+=100px"},100);
-		$("nav").animate({left: "+=100px"},100);
-		$("#showmenu").fadeOut(50);
+		hideshowMenu(true);
 	})
 	
 	/* Edition d'une image, clic sur une image de la galerie */
 	.on("click",".img-bloc",function(){
-		$(".loader").fadeIn();
+		$(".loader").show();
 		var imgid = $(this).attr('id').split("_");
 		var action = 'image';
 		console.log("Image block Click => View Image ID: "+imgid[1]);
@@ -62,7 +60,7 @@ $(document).ready(function(){
 		var imgid = $("#imageid").val();
 		var what = $(this).attr('id');
 		var val = $(this).val();
-		$(".loader").fadeIn();
+		$(".loader").show();
 		console.log('Save Images Property Changes: '+what+', Image ID: '+ imgid);
 		$.post(rpcfile,{
 			action: 'save',
@@ -86,7 +84,7 @@ $(document).ready(function(){
 	.on("click",".btn",function(){
 		if(!($(this).hasClass('disable'))){
 			console.log("Clicked on a Button: ");
-			$(".loader").fadeIn();
+			$(".loader").show();
 			if($(this).hasClass("withoverlay")){ $(".overlay").show(); }
 			var what = $(this).attr('rel');
 			/* On test si le bouton a l'attribut rev qui contient l'ID de l'image, sinon on prend le input caché #imageid */
@@ -175,7 +173,7 @@ $(document).ready(function(){
 /* Fonctions */
 function buildTemplate(template,id){
 	console.log("Call function *buildTemplate* => ["+template+"]");
-	$(".loader").fadeIn();
+	$(".loader").show();
 	if(id === undefined){ id = 0; }
 	var d = jsonarray;
 	$("#global").removeClass().hide().html("").addClass(template);
@@ -227,7 +225,7 @@ function buildTemplate(template,id){
 				var imgprev = $("<div>",{class: "btn", rel: "prev", html: "Précédent"});
 				var boxfilter = $("<div>",{class: "filter-box"});
 				
-				imgmenu.append(btnshow10,btnshow20,btnshow50,imgnext,imgprev);
+				imgmenu.append(btnshow10,btnshow20,btnshow50,imgnext,imgprev,clear);
 				resizeBlocs();
 				$("#global").append(clear,imgmenu);
 				/* Activer le bouton du nombre d'images */
@@ -253,17 +251,11 @@ function buildTemplate(template,id){
 			}else{
 				var timestamp = Math.round(+new Date() / 1000);
 				if(currentimage.title == ""){ var title = ""; }else{ var title = currentimage.title; }
-				if(currentimage.orientation == "1"){ 
-					/* Vertical */
-					var w = "300" ; var h = "400"; 
-				}else{
-					/* Horizontal */
-					var w = "400" ; var h = "300"; 
-				}
+				if(currentimage.orientation == "1"){ classOrientation = "vertical"; }else{ classOrientation = "horizontal"; }
 				
 				var imgdetail = $("<div>",{ class: "img-detail"});
 				var imgpreview = $("<div>",{ class: "img-preview" });
-				var img = $("<img>",{ id: "imgpreview", src: '/storage/'+currentimage.userid+'/'+currentimage.timestamp+'.jpg?t='+timestamp}).css({width: w+"px", height: h+"px"});
+				var img = $("<img>",{ id: "imgpreview", class: classOrientation, src: '/storage/'+currentimage.userid+'/'+currentimage.timestamp+'.jpg?t='+timestamp});
 				var imgctrl = $("<div>",{class: "img-ctrl"});
 				var imgedit = $("<div>",{class: "img-edit", html: "<table></table>"});
 				var imgprev = $("<div>",{class: "img-prev", image: ""});
@@ -297,10 +289,17 @@ function buildTemplate(template,id){
 				imgdetail.append(imgpreview,imgctrl);
 				
 				$("#global").append(imgdetail);
-				$("table").append("<tr><th>Catégorie</th><td id='selection'><div class='categorie-icon'></div></td></tr>");
-				$("#selection").append(select);
-				$("table").append("<tr><th>Titre</th><td><input type='text' id='imagetitle' value='"+title+"'/></td></tr>");
-				$("table").append("<tr><th>Lien pour le Forum</th><td><textarea readonly>[img]http://img.t4zone.org/i.php?i="+currentimage.timestamp+"d"+currentimage.userid+"[/img]</textarea></td></tr>");
+				if(smartphone){
+					$("table").append("<tr><th>Catégorie</th></tr><tr><td id='selection'><div class='categorie-icon'></div></td></tr>");
+					$("#selection").append(select);
+					$("table").append("<tr><th>Titre</th></tr><tr><td><input type='text' id='imagetitle' value='"+title+"'/></td></tr>");
+					$("table").append("<tr><th>Lien pour le Forum</th></tr><tr><td><textarea readonly>[img]http://img.t4zone.org/i.php?i="+currentimage.timestamp+"d"+currentimage.userid+"[/img]</textarea></td></tr>");
+				}else{
+					$("table").append("<tr><th>Catégorie</th><td id='selection'><div class='categorie-icon'></div></td></tr>");
+					$("#selection").append(select);
+					$("table").append("<tr><th>Titre</th><td><input type='text' id='imagetitle' value='"+title+"'/></td></tr>");
+					$("table").append("<tr><th>Lien pour le Forum</th><td><textarea readonly>[img]http://img.t4zone.org/i.php?i="+currentimage.timestamp+"d"+currentimage.userid+"[/img]</textarea></td></tr>");
+				}
 				$(".categorie-icon").css({'background-image': "url('../img/categories/32/cat_"+currentimage.categorie+".png')"});
 			}
 		break;
@@ -331,9 +330,15 @@ function buildTemplate(template,id){
 				}
 			}
 			$("#global").append(helpbox,uploadform,btns);
-			$("table").append("<tr><th>Fichier image</th><td><input type='file' id='image-file'/></td></tr>");
-			$("table").append("<tr><th>Titre</th><td><input type='text' id='image-title' value=''/></td></tr>");
-			$("table").append("<tr><th>Catégorie</th><td id='selection'><div class='categorie-icon'></div></td></tr>");
+			if(smartphone){
+				$("table").append("<tr><th>Fichier image</th></tr><tr><td><input type='file' id='image-file'/></td></tr>");
+				$("table").append("<tr><th>Titre</th></tr><tr><td><input type='text' id='image-title' value=''/></td></tr>");
+				$("table").append("<tr><th>Catégorie</th></tr><tr><td id='selection'><div class='categorie-icon'></div></td></tr>");
+			}else{
+				$("table").append("<tr><th>Fichier image</th><td><input type='file' id='image-file'/></td></tr>");
+				$("table").append("<tr><th>Titre</th><td><input type='text' id='image-title' value=''/></td></tr>");
+				$("table").append("<tr><th>Catégorie</th><td id='selection'><div class='categorie-icon'></div></td></tr>");
+			}
 			$("#selection").append(select);
 		break;
 		
@@ -350,7 +355,7 @@ function buildTemplate(template,id){
 		
 		default:
 		case "home":
-			
+			$("#global").html("Window Size: "+ $(window).width()+"x"+$(window).height()+"px<br/>Document Size: "+ $(document).width()+"x"+$(document).height()+"px");
 		break;
 	}
 	$(".loader").fadeOut({complete:function(){
@@ -362,7 +367,7 @@ function buildTemplate(template,id){
 function reloadJson(){
 	console.log("Call function *reloadJson*");
 	$(".overlay").show();
-	$(".loader").fadeIn();
+	$(".loader").show();
 	$.post(rpcfile,{ 
 		action: 'initload'
 	},function(data){
@@ -381,8 +386,29 @@ function resizeBlocs(){
 	var gheight = $("#global").height();
 	var wwidth = $(window).width();
 	var wheight = $(window).height();
-	$(".img-menu").css({width: Math.floor(gwidth - 6)+"px"});
-	$(".loader").css({left: Math.floor((wwidth - 78)/2)+"px", top: Math.floor((wheight - 78)/2)+"px"});
+	if(Math.floor(wwidth) < 640){
+		smartphone = true;
+	}
+	if(!smartphone){
+		$(".img-menu").css({width: Math.round(gwidth - 6)+"px"}); 
+		$(".loader").css({left: Math.round((wwidth - 139)/2)+"px", top: Math.round((wheight - 47)/2)+"px"});
+	}
+}
+
+function hideshowMenu(show){
+	if(show){
+		console.log("Show menu");
+		$("#global").animate({marginLeft: "+=100px"},100);
+		if($(".img-menu").length > 0){ $(".img-menu").animate({marginLeft: "+=100px"},100); }
+		$("nav").animate({left: "+=100px"},100);
+		$("#showmenu").fadeOut(50);
+	}else{
+		console.log("Hide menu");
+		$("nav").animate({left: "-=100px"},100,function(){$("#showmenu").fadeIn(50);});
+		$("#global").animate({marginLeft: "-=100px"},100);
+		console.log($(".img-menu").css('margin-left'));
+		if($(".img-menu").length > 0 && $(".img-menu").css('margin-left') > '0px'){ $(".img-menu").animate({marginLeft: "-=100px"},100); }
+	}
 }
 
 function dump(arr,level){
