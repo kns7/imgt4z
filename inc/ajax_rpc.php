@@ -156,11 +156,9 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 					if($_POST['what'] == "rotatel"){ $rotate = "L"; }else{ $rotate = "R"; }
 					$orientation = $image->rotate($rotate,$imagesManager);
 					if($orientation == 1){
-						$rArray['width'] = 300;
-						$rArray['height'] = 400;
+						$rArray['orientation'] = 'vertical';
 					}else{
-						$rArray['width'] = 400;
-						$rArray['height'] = 300;
+						$rArray['orientation'] = 'horizontal';
 					}
 					$rArray['url'] = "storage/".$image->userid()."/".$image->timestamp().".jpg";
 				break;

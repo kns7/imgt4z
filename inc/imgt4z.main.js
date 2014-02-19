@@ -111,7 +111,7 @@ $(document).ready(function(){
 						reloadJson();
 						d = JSON.parse(data);
 						var timestamp = Math.round(+new Date() / 1000);
-						$("#imgpreview").attr('src', d.url+"?t="+timestamp).css({width: d.width+"px", height: d.height+"px"});
+						$("#imgpreview").attr('src', d.url+"?t="+timestamp).removeClass().addClass(d.orientation);
 						$(".overlay").hide();
 						$(".loader").fadeOut();
 					});
@@ -386,8 +386,10 @@ function resizeBlocs(){
 	var gheight = $("#global").height();
 	var wwidth = $(window).width();
 	var wheight = $(window).height();
-	if(Math.floor(wwidth) < 640){
+	console.log("Window Size: "+wwidth+"x"+wheight+"px");
+	if(Math.round(wwidth) < 481){
 		smartphone = true;
+		console.log("Smartphone Mode activated ("+Math.round(wwidth)+")");
 	}
 	if(!smartphone){
 		$(".img-menu").css({width: Math.round(gwidth - 6)+"px"}); 
