@@ -37,6 +37,8 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 					$rArray['images'][$i]['categorie'] = $image->categorieid();
 					$rArray['images'][$i]['dateadd'] = $image->dateadd();
 					$rArray['images'][$i]['userid'] = $image->userid();
+					$rArray['images'][$i]['width'] = $image->width();
+					$rArray['images'][$i]['height'] = $image->height();
 					$i++;
 				}
 			}
@@ -114,6 +116,8 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 					$rArray['images'][$i]['categorie'] = $image->categorieid();
 					$rArray['images'][$i]['dateadd'] = $image->dateadd();
 					$rArray['images'][$i]['userid'] = $image->userid();
+					$rArray['images'][$i]['width'] = $image->width();
+					$rArray['images'][$i]['height'] = $image->height();
 					$i++;
 				}
 			}
@@ -133,6 +137,8 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 				$rArray['image']['categorieid'] = $image->categorieid();
 				$rArray['image']['dateadd'] = $image->dateadd();
 				$rArray['image']['userid'] = $image->userid();
+				$rArray['image']['width'] = $image->width();
+				$rArray['image']['height'] = $image->height();
 			}
 			/* Get Categories List */
 			$categories = $categoriesManager->getList();
@@ -189,15 +195,26 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 			}
 		break;
 		
+		case "newimage":
+			$now = date("Y-m-d H:i:s");
+			$image = new Image(array(
+				'timestamp' => $_POST['timestamp'],
+				'orientation' => $_POST['orientation'],
+				'categorieid' => $_POST['categorieid'],
+				'userid' => $_SESSION['user_id'],
+				'title' => $_POST['title'],
+				'dateadd' => $now,
+				'width' => $_POST['width'],
+				'height' => $_POST['height']
+			));
+			$imagesManager->add($image);
+		break;
+		
 		case "usersettings":
 			if(isset($_POST['field'])){ $user->setField($_POST['field']); $_SESSION['user_field'] = $_POST['field']; }
 			if(isset($_POST['ordre'])){ $user->setAsc($_POST['ordre']); $_SESSION['user_ordre'] = $_POST['ordre']; }
 			if(isset($_POST['step'])){ $user->setStep($_POST['step']); $_SESSION['user_step'] = $_POST['step']; }
 			$usersManager->update($user);
-		break;
-		
-		case "imageupload":
-			$rArray['upload'] = "Prout!";
 		break;
 	}
 	echo json_encode($rArray);

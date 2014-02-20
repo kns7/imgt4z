@@ -164,7 +164,7 @@ $(document).ready(function(){
 						beforeSubmit:	uploadBeforeSubmit,
 						success:		uploadSuccess,
 						error:			uploadError,
-						resetForm:		true
+						resetForm:		false
 					});            
 					return false; 
 				break;
@@ -203,10 +203,18 @@ function buildTemplate(template,id){
 					/* Test Image orientation */
 					if(image.orientation == "1"){
 						/* Vertical */
-						var w = "150" ; var h = "200"; 
+						if(image.width < '150'){
+							w = image.width;
+						}else{
+							w = "150"
+						}
 					}else{
 						/* Horizontal */
-						var w = "200" ; var h = "150"; 
+						if(image.width < '200'){
+							w = image.width;
+						}else{
+							w = "200"
+						}
 					}
 					var imgbloc = $("<div>",{
 						id: 'image_'+image.id,
@@ -214,7 +222,7 @@ function buildTemplate(template,id){
 					});
 					var img = $("<div>",{
 						class: 'img',
-						html: "<img src='/storage/"+image.userid+"/"+image.timestamp+".jpg?t="+timestamp+"' width='"+w+"' height='"+h+"'/>"
+						html: "<img src='/storage/"+image.userid+"/"+image.timestamp+".jpg?t="+timestamp+"' width='"+w+"'/>"
 					});
 					var infos = $("<div>",{
 						class: 'infos',
@@ -319,13 +327,13 @@ function buildTemplate(template,id){
 			});
 			var uploadform = $("<div>",{
 				class: "upload-form",
-				html: "<div id='uploadoutput'></div><form action='inc/ajax_rpc.php' method='post' enctype='multipart/form-data' id='upload_form'><input type='hidden' id='action' value='imageupload'/><table></table></form>"
+				html: "<div id='uploadoutput'></div><form action='inc/upload.php' method='post' enctype='multipart/form-data' id='upload_form'><input type='hidden' id='action' value='imageupload'/><table></table></form>"
 			});
 			var btns = $("<div>",{
 				class: "upload-btns",
 				html: "<div class='btn withoverlay' rel='send'>Envoyer</div><div class='btn' rel='cancel'>Annuler</div><div class='clear'></div>"
 			});
-			var select = $("<select>",{id: "image-categorie"});
+			var select = $("<select>",{id: "categorie"});
 			if(d.categories.length > 0){
 					for(var i = 0; i < d.categories.length; i++){
 						var categorie = d.categories[i];
@@ -339,12 +347,12 @@ function buildTemplate(template,id){
 			}
 			$("#global").append(helpbox,uploadform,btns);
 			if(smartphone){
-				$("table").append("<tr><th>Fichier image</th></tr><tr><td><input type='file' id='image-file'/></td></tr>");
-				$("table").append("<tr><th>Titre</th></tr><tr><td><input type='text' id='image-title' value=''/></td></tr>");
+				$("table").append("<tr><th>Fichier image</th></tr><tr><td><input type='file' id='file' name='file'/></td></tr>");
+				$("table").append("<tr><th>Titre</th></tr><tr><td><input type='text' id='title' name='title' value=''/></td></tr>");
 				$("table").append("<tr><th>Catégorie</th></tr><tr><td id='selection'><div class='categorie-icon'></div></td></tr>");
 			}else{
-				$("table").append("<tr><th>Fichier image</th><td><input type='file' id='image-file'/></td></tr>");
-				$("table").append("<tr><th>Titre</th><td><input type='text' id='image-title' value=''/></td></tr>");
+				$("table").append("<tr><th>Fichier image</th><td><input type='file' id='file' name='file'/></td></tr>");
+				$("table").append("<tr><th>Titre</th><td><input type='text' id='title' name='file' value=''/></td></tr>");
 				$("table").append("<tr><th>Catégorie</th><td id='selection'><div class='categorie-icon'></div></td></tr>");
 			}
 			$("#selection").append(select);
@@ -427,18 +435,31 @@ function uploadError(){
 	$(".overlay").hide();
 	$(".loader").fadeOut();
 }
-function uploadSuccess(){
+function uploadSuccess(responseText, statusText, xhr, $form){
 	console.log("Call function *uploadSuccess*");
-	$("#uploadoutput").html("L'image a bien été récupérée! Elle se trouve désormais dans tes images.").removeClass().addClass("success").show();
-	$(".overlay").hide();
-	$(".loader").fadeOut();
+	d = JSON.parse(responseText);
+	$.post(rpcfile,{
+		action: 'newimage',
+		title: $("#title").val(),
+		categorieid: $("#categorie").val(),
+		timestamp: d.timestamp,
+		orientation: d.orientation,
+		width: d.width,
+		height: d.height
+	},function(){
+		$("#upload_form").resetForm();
+		reloadJson();
+		$("#uploadoutput").html("L'image a bien été récupérée! Elle se trouve désormais dans tes images.").removeClass().addClass("success").show();
+		$(".overlay").hide();
+		$(".loader").fadeOut();
+	});
 }
 function uploadBeforeSubmit(){
 	console.log("Call function *uploadBeforeSubmit*");
 	$("#uploadoutput").html("").removeClass().hide();
 	if(window.File && window.FileReader && window.FileList && window.Blob){
-		var fsize = $('#image-file')[0].files[0].size;
-		var ftype = $('#image-file')[0].files[0].type;
+		var fsize = $('#file')[0].files[0].size;
+		var ftype = $('#file')[0].files[0].type;
         /* Verifier le type de fichier */
 		switch(ftype){
             case 'image/png': 

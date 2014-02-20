@@ -12,6 +12,8 @@ class Image {
 	private $_categorie;
 	private $_orientation;
 	private $_dateadd;
+	private $_width;
+	private $_height;
 	
 	/**
 	 * Build a new Image object
@@ -42,6 +44,8 @@ class Image {
 	public function categorie(){ return $this->_categorie; }
 	public function orientation(){ return $this->_orientation; }
 	public function dateadd(){ return $this->_dateadd; }
+	public function width(){ return $this->_width; }
+	public function height(){ return $this->_height; }
 	
 	/* Setters */
 	public function setId($val){
@@ -83,11 +87,23 @@ class Image {
 			$this->_orientation = $val; 
 		}
 	}
-	
 	public function setDateadd($val){
 		$val = new Datetime($val);
 		$this->_dateadd = $val->format("d/m/Y H:i:s");
 	}
+	public function setWidth($val){
+		$val = (int) $val;
+		if($val > 0){ 
+			$this->_width = $val; 
+		}
+	}
+	public function setHeight($val){
+		$val = (int) $val;
+		if($val > 0){ 
+			$this->_height = $val; 
+		}
+	}
+	
 	
 	public function png2jpg(){
 		$image = imagecreatefrompng($filePath);

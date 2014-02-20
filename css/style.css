@@ -378,11 +378,11 @@ table td input[type=text]:focus, table td textarea:focus, table td select:focus 
 }
 #imgpreview.horizontal {
 	width: 800px;
-	height: 600px;
+	/*height: 600px;*/
 }
 #imgpreview.vertical {
 	width: 600px;
-	height: 800px;
+	/*height: 800px;*/
 }
 .img-ctrl {
 	position: relative;
@@ -505,11 +505,11 @@ Petits Smartphones (Largeur 240px)
 	}
 	#imgpreview.horizontal {
 		width: 195px;
-		height: 146px;
+		/*height: 146px;*/
 	}
 	#imgpreview.vertical {
 		width: 146px;
-		height: 195px;
+		/*height: 195px;*/
 	}
 	.img-edit { padding-top: 55px; }
 	.img-actions { top: 5px; right: 20px; }
@@ -538,11 +538,11 @@ Smartphones (Largeur 320px)
 	.img-detail{ width: 265px; }
 	#imgpreview.horizontal {
 		width: 265px;
-		height: 199px;
+		/*height: 199px;*/
 	}
 	#imgpreview.vertical {
 		width: 199px;
-		height: 265px;
+		/*height: 265px;*/
 	}
 	.img-actions{ right: 40px; }
 	.img-actions .btn { margin: 5px 15px; }
