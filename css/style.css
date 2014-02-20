@@ -278,6 +278,9 @@ table td select {
 table td input[type=text]:focus, table td textarea:focus, table td select:focus {
 	border: 1px solid #ff9900;
 }
+table td input[type=file]{
+	padding-top: 4px;
+}
 
 /* Sections Mes Images */
 .images {

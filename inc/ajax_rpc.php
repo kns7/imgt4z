@@ -26,7 +26,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 			/* Images */
 			$images = $imagesManager->getList($_SESSION['user_id']);
 			$count = $imagesManager->count($_SESSION['user_id']);
-			$rArray['count'] = $count;
+			$rArray['storage'] = $count;
 			if(!empty($images)){
 				$i = 0;
 				foreach($images as $image){
@@ -42,6 +42,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 					$i++;
 				}
 			}
+			
 			/* Categories */
 			$categories = $categoriesManager->getList();
 			if(!empty($categories)){
@@ -52,12 +53,26 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 					$i++;
 				}
 			}
+			
 			/* Textes d'aide */
 			$rArray['help']['upload'] = "<p>Via ce formulaire, tu peux envoyer une image sur T4Zone Images.<br/>Les formats d'images acceptés sont les suivants: JPEG, PNG et GIF.</p><p>L'image sera automatiquement redimensionnée en 800x600 (ou 600x800), un Watermark (Tatouage Numérique) sera ajouté à l'image et enfin un lien sera automatiquement généré pour pouvoir la poster sur le forum.<br/>Si l'image est mal orientée, il te sera possible une fois envoyée, de la faire tourner pour la mettre dans le bon sens!</p><p><em>S'il devait y avoir un problème lors de l'envoi, merci de contacter les admins du Forum T4Zone <a href='mailto:admin@t4zone.org?subject=Erreur Upload T4Zone Images'>admins@t4zone.org</a></em></p>";
+			
 			/* User Settings */
 			$rArray['user']['field'] = $_SESSION['user_field'];
 			$rArray['user']['ordre'] = $_SESSION['user_ordre'];
 			$rArray['user']['step'] = $_SESSION['user_step'];
+			
+			/* Comptage des images */
+			$storage = opendir("../storage/".$_SESSION['user_id']);
+			$size = 0;
+			while($file = readdir($storage)){
+				if(!in_array($file, Array("..","."))){
+					if(!is_dir("../storage/".$_SESSION['user_id']."/$file")){
+						$size += filesize("../storage/".$_SESSION['user_id']."/$file");
+					}
+				}
+			}
+			$rArray['storage']['size'] = $size;
 		break;
 		
 		case "logout":

@@ -232,7 +232,7 @@ function buildTemplate(template,id){
 					$("#image_"+image.id).append(img,infos);
 				}
 				var clear = $("<div>",{ class: 'clear'});
-				var imgmenu = $("<div>",{ class: 'img-menu', text: d.count.total +' images'});
+				var imgmenu = $("<div>",{ class: 'img-menu', text: d.storage.elements +' images'});
 				var btnfilter = $("<div>",{class: 'btn', rel: 'filter'});
 				var btnshow10 = $("<div>",{class: 'btn', rel: 'show', amount: '10'});
 				var btnshow20 = $("<div>",{class: 'btn', rel: 'show', amount: '20'});
@@ -371,7 +371,7 @@ function buildTemplate(template,id){
 		
 		default:
 		case "home":
-			$("#global").html("Window Size: "+ $(window).width()+"x"+$(window).height()+"px<br/>Document Size: "+ $(document).width()+"x"+$(document).height()+"px");
+			
 		break;
 	}
 	$(".loader").fadeOut({complete:function(){

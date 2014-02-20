@@ -140,7 +140,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])){
 			imagecopy($newimage,$wamark,$wax,$way,0,0,$wasize[0],$wasize[1]);
 			
 			/* Enregistrement de la nouvelle image JPEG */
-			imagejpeg($newimage,$storagefilename,92);
+			imagejpeg($newimage,$storagefilename,85);
 			imagedestroy($uploadimage);
 			imagedestroy($newimage);
 			imagedestroy($wamark);
