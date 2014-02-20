@@ -26,6 +26,11 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])){
 	$storagefilename = "../storage/".$_SESSION['user_id']."/".$timestamp.".jpg";
 	$watermark = '../img/watermark.png';
 	
+	/* Si le répertoire utilisateur n'est pas présent, on le créé */
+	if(!file_exists("../storage/".$_SESSION['user_id'])){
+		mkdir("../storage/".$_SESSION['user_id'], '777');
+	}
+	
 	if(isset($_FILES[$fileElementName])){
 		if(!empty($_FILES[$fileElementName]['error'])){
 			switch($_FILES[$fileElementName]['error']){
