@@ -4,6 +4,18 @@
  * If user is not logged, he gets the Login fields
  */
 if(isset($_POST) && !empty($_POST['user'])){
+	/*define('IN_PHPBB', true);
+	$phpEx = substr(strrchr(__FILE__, '.'), 1);
+	$phpbb_root_path = './../forum/';
+	$website_root_path = './../';
+	include($phpbb_root_path . 'common.php');
+	// Start session management
+	$user->session_begin();
+	$auth->acl($user->data);
+	$user->setup();*/
+	
+	
+	
 	/* Try to login user using phpBB Functions to hash password */
 	/* => Bon ca me broute, j'y arrive pô... 
 	
