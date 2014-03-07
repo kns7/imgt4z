@@ -187,7 +187,7 @@ function buildTemplate(template,id){
 	$("#global").removeClass().hide().html("").addClass(template);
 	switch(template){
 		case "images":
-			if(d.images.length > 0){
+			if(d.hasOwnProperty('images')){
 				pagination.end = Math.round(pagination.start + pagination.step);
 				var timestamp = Math.round(+new Date() / 1000);
 				if(pagination.end > d.images.length){
