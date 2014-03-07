@@ -35,6 +35,10 @@ if(isset($_POST) && !empty($_POST['user'])){
 	 * Et pour les zozos modos:
 	 * User: modo
 	 * Mdp : VivalaZone1
+	 * 
+	 * Et pour l'asso (enfin le bureau):
+	 * User: asso
+	 * Mdp: 07032014
 	 */
 	if($_POST['user'] == "Serialg" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
 		$user = $usersManager->get('25549');
@@ -45,6 +49,9 @@ if(isset($_POST) && !empty($_POST['user'])){
 	}elseif($_POST['user'] == "modos" && md5($_POST['pwd']) == "6f85aa27462f8587a6bbb7beadb0e71b"){
 		$user = $usersManager->get('25548');
 		header("Location: /");
+	}elseif($_POST['user'] == "asso" && md5($_POST['pwd']) == "3bf75af9a59b1d53da11c9a89c790ee4"){
+                $user = $usersManager->get('10');
+                header("Location: /");
 	}else{
 		$error = "Utilisateur et/ou mot de passe incorrects!";
 	}
