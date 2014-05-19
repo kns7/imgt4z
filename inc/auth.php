@@ -4,56 +4,72 @@
  * If user is not logged, he gets the Login fields
  */
 if(isset($_POST) && !empty($_POST['user'])){
-	/*define('IN_PHPBB', true);
-	$phpEx = substr(strrchr(__FILE__, '.'), 1);
-	$phpbb_root_path = './../forum/';
-	$website_root_path = './../';
-	include($phpbb_root_path . 'common.php');
-	// Start session management
-	$user->session_begin();
-	$auth->acl($user->data);
-	$user->setup();*/
+	switch($auth_type){
+		case "local":
+			if($usersManager->login($_POST['user'],$_POST['pwd']) == "error"){
+				$error = "Utilisateur et/ou mot de passe incorrects!";
+			}else{
+				header("Location: /");
+			}
+		break;
 	
-	
-	
-	/* Try to login user using phpBB Functions to hash password */
-	/* => Bon ca me broute, j'y arrive pô... 
-	
-	include('phpbbinc.php');
-	$query = "SELECT user_id, username, username_clean FROM for_users WHERE username_clean = ? AND user_password = ?";
-	$prep = $conn_forum->prepare($query);
-	$prep->bindValue(1,$_POST['user'],PDO::PARAM_STR);
-	$prep->bindValue(1,phpbb_hash($_POST['pwd']),PDO::PARAM_STR);
-	$prep->execute();
-	$return = $prep->fetchAll();
-	print_r($return);*/
-	
-	/*
-	 * Du coup, mot de passe temporaire:
-	 * lat4zslpf (Les Admins T4Zone Sont Les Plus Beaux) ;)
-	 * 
-	 * Et pour les zozos modos:
-	 * User: modo
-	 * Mdp : VivalaZone1
-	 * 
-	 * Et pour l'asso (enfin le bureau):
-	 * User: asso
-	 * Mdp: 07032014
-	 */
-	if($_POST['user'] == "Serialg" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
-		$user = $usersManager->get('25549');
-		header("Location: /");
-	}elseif($_POST['user'] == "jeb" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
-		$user = $usersManager->get('2554');
-		header("Location: /");
-	}elseif($_POST['user'] == "modos" && md5($_POST['pwd']) == "6f85aa27462f8587a6bbb7beadb0e71b"){
-		$user = $usersManager->get('25548');
-		header("Location: /");
-	}elseif($_POST['user'] == "asso" && md5($_POST['pwd']) == "3bf75af9a59b1d53da11c9a89c790ee4"){
-                $user = $usersManager->get('10');
-                header("Location: /");
-	}else{
-		$error = "Utilisateur et/ou mot de passe incorrects!";
+		case "phpbb":
+			/*define('IN_PHPBB', true);
+			$phpEx = substr(strrchr(__FILE__, '.'), 1);
+			$phpbb_root_path = './../forum/';
+			$website_root_path = './../';
+			include($phpbb_root_path . 'common.php');
+			// Start session management
+			$user->session_begin();
+			$auth->acl($user->data);
+			$user->setup();*/
+
+
+
+			/* Try to login user using phpBB Functions to hash password */
+			/* => Bon ca me broute, j'y arrive pô... 
+
+			include('phpbbinc.php');
+			$query = "SELECT user_id, username, username_clean FROM for_users WHERE username_clean = ? AND user_password = ?";
+			$prep = $conn_forum->prepare($query);
+			$prep->bindValue(1,$_POST['user'],PDO::PARAM_STR);
+			$prep->bindValue(1,phpbb_hash($_POST['pwd']),PDO::PARAM_STR);
+			$prep->execute();
+			$return = $prep->fetchAll();
+			print_r($return);*/
+
+			/*
+			 * Du coup, mot de passe temporaire:
+			 * lat4zslpf (Les Admins T4Zone Sont Les Plus Beaux) ;)
+			 * 
+			 * Et pour les zozos modos:
+			 * User: modo
+			 * Mdp : VivalaZone1
+			 * 
+			 * Et pour l'asso (enfin le bureau):
+			 * User: asso
+			 * Mdp: 07032014
+			 */
+			if($_POST['user'] == "Serialg" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
+				$user = $usersManager->get('25549');
+				header("Location: /");
+			}elseif($_POST['user'] == "jeb" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
+				$user = $usersManager->get('2554');
+				header("Location: /");
+			}elseif($_POST['user'] == "modos" && md5($_POST['pwd']) == "6f85aa27462f8587a6bbb7beadb0e71b"){
+				$user = $usersManager->get('25548');
+				header("Location: /");
+			}elseif($_POST['user'] == "asso" && md5($_POST['pwd']) == "3bf75af9a59b1d53da11c9a89c790ee4"){
+						$user = $usersManager->get('10');
+						header("Location: /");
+			}else{
+				$error = "Utilisateur et/ou mot de passe incorrects!";
+			}
+		break;
+		
+		default:
+			$error = "Mismatch in Configuration, please contact administrator!";
+		break;
 	}
 }
 ?>
