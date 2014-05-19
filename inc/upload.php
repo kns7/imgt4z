@@ -145,7 +145,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])){
 			imagejpeg($newimage,$storagefilename,85);
 			imagedestroy($uploadimage);
 			imagedestroy($newimage);
-			imagedestroy($wamark);
+			//imagedestroy($wamark);
 			
 			$rArray['width'] = $width;
 			$rArray['height'] = $height;
