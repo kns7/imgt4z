@@ -86,7 +86,7 @@ if(isset($_POST) && !empty($_POST['user'])){
 		<meta name="bingbot" content="noimageindex">
 		<meta name="Slurp" content="noimageindex">
 		<link rel="stylesheet" href="css/style.css"/>
-		<title>T4Zone Images - Authentification</title>
+		<title>KNS7 Images - Authentification</title>
 	</head>
 	<body>
 		<section class="auth-form">

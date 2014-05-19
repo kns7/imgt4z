@@ -413,7 +413,7 @@ table td input[type=file]{
 
 
 /* Buttons Decorations */
-.btn {
+.btn, .btn-menu {
 	width: 32px;
 	height: 32px;
 	line-height: 32px;
@@ -428,6 +428,18 @@ table td input[type=file]{
 	vertical-align: middle;
 	font-weight: bold;
 }
+.btn-menu {
+	display: none;
+	height: 128px;
+	position: absolute;
+	bottom: 50px;
+	left: -5px;
+	background-color: #212121;
+	opacity: 0.95;
+	z-index: 0;
+	width: 42;
+	padding: 10px;
+}
 .upload-btns .btn { float: right; width: 100px; color: #fff; }
 .img-actions .btn { float: right; }
 .img-menu .btn { float: left; }
@@ -439,9 +451,9 @@ table td input[type=file]{
 .btn[rel='send']{ background-color: #43C343;}
 .btn[rel='cancel']{ background-color: #EB4116;}
 .btn[rel='filter']{ background-image: url('../img/filter_24.png'); }
-.btn[rel='show'][amount='10']{ background-image: url('../img/show10_24.png'); }
-.btn[rel='show'][amount='20']{ background-image: url('../img/show20_24.png'); }
-.btn[rel='show'][amount='50']{ background-image: url('../img/show50_24.png'); }
+.btn[rel='show'][amount='10'],.btn[rel='changeshow'][amount='10']{ background-image: url('../img/show10_24.png'); }
+.btn[rel='show'][amount='20'],.btn[rel='changeshow'][amount='20']{ background-image: url('../img/show20_24.png'); }
+.btn[rel='show'][amount='50'],.btn[rel='changeshow'][amount='50']{ background-image: url('../img/show50_24.png'); }
 .btn[rel='prev'], .btn[rel='next']{ width: 80px; float: right; }
 .btn:hover { background-color: #FFD387; }
 .btn[rel='cancel']:hover { background-color: #FF0000; }
@@ -468,7 +480,7 @@ Standard Smartphones, Reglages globaux
 	#global.images{  margin-bottom: 114px; }
 	#global.image{ padding: 10px; margin-bottom: 20px;}
 	#global.upload{ margin-bottom: 20px;}
-	.btn[rel='prev']{ margin-right: 73px; }
+	.btn[rel='prev']{ margin-right: 5px; }
 	table th { text-align: center; }
 	table td input{ width: 100%; }
 	table td select { width: 186px; }

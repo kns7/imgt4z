@@ -86,7 +86,7 @@ $(document).ready(function(){
 		if(!($(this).hasClass('disable'))){
 			var what = $(this).attr('rel');
 			console.log("Clicked on a Button: ["+what+"]");
-			$(".loader").show();
+			if($(this).attr('rev') != "noload"){ $(".loader").show(); }
 			if($(this).hasClass("withoverlay")){ $(".overlay").show(); }
 			/* On test si le bouton a l'attribut rev qui contient l'ID de l'image, sinon on prend le input caché #imageid */
 			if(typeof($(this).attr('rev')) != "undefined"){ var imgid = $(this).attr('rev'); }else{ var imgid = $("#imageid").val(); }
@@ -133,14 +133,26 @@ $(document).ready(function(){
 						return false;
 					}
 				break;
-
+				
 				case "show":
+					/* Affiche ou cache le menu du nbr d'images affichées */
+					if($(".btn-menu[rel='show']").is('Visible')){
+						$(".btn-menu[rel='show']").hide();
+					}else{
+						$(".btn-menu[rel='show']").show();
+					}
+				break;
+
+				case "changeshow":
 					/* Reglage du nombre d'images affichées */
-					$(".btn[rel='show']").removeClass('active');
+					$(".btn[rel='changeshow']").removeClass('active');
 					$(this).addClass('active');
+					$(".btn[rel='show']").attr('amount');
+					$(".btn-menu[rel='show']").hide();
 					pagination.step = Math.round($(this).attr('amount'));
 					/* Update User Settings */
 					$.post(rpcfile,{action: 'usersettings', step: pagination.step});
+					jsonarray.user.step = Math.round($(this).attr('amount'));
 					buildTemplate('images');
 				break;
 
@@ -234,14 +246,17 @@ function buildTemplate(template,id){
 				var clear = $("<div>",{ class: 'clear'});
 				var imgmenu = $("<div>",{ class: 'img-menu', text: d.storage.elements +' images'});
 				var btnfilter = $("<div>",{class: 'btn', rel: 'filter'});
-				var btnshow10 = $("<div>",{class: 'btn', rel: 'show', amount: '10'});
-				var btnshow20 = $("<div>",{class: 'btn', rel: 'show', amount: '20'});
-				var btnshow50 = $("<div>",{class: 'btn', rel: 'show', amount: '50'});
+				var btnshowmenu = $("<div>",{class: 'btn-menu', rel: 'show'});
+				var btnshow = $("<div>",{class: 'btn', rel: 'show', rev: 'noload', amount: '0'});
+				var btnshow10 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '10'});
+				var btnshow20 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '20'});
+				var btnshow50 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '50'});
 				var imgnext = $("<div>",{class: "btn", rel: "next", html: "Suivant"});
 				var imgprev = $("<div>",{class: "btn", rel: "prev", html: "Précédent"});
 				var boxfilter = $("<div>",{class: "filter-box"});
-				
-				imgmenu.append(btnshow10,btnshow20,btnshow50,imgnext,imgprev,clear);
+				btnshow.attr('amount',d.user.step);
+				btnshowmenu.append(btnshow50,btnshow20,btnshow10);
+				imgmenu.append(btnshow,btnshowmenu,imgnext,imgprev,clear);
 				resizeBlocs();
 				$("#global").append(clear,imgmenu);
 				/* Activer le bouton du nombre d'images */

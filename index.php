@@ -32,7 +32,7 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 		<link rel="shortcut icon" href="favicon.ico"/>
 		<link rel="icon" href="favicon.ico"/>
 		<link rel="stylesheet" type="text/css" href="css/style.css" media="screen"/>
-		<title>T4Zone Images</title>
+		<title>KNS7 Images</title>
 	</head>
 	<body>
 		<div id="showmenu"></div>
