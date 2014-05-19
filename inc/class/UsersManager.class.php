@@ -31,6 +31,17 @@ class UsersManager {
 		return $q->execute();
 	}
 	
+	public function login($user,$password){
+		$q = $this->_db->prepare("SELECT id FROM users WHERE name = :name AND password = :password");
+		$q->bindValue(':name',$user);
+		$q->bindValue(':password',md5($password));
+		if(!($q->execute())){
+			return "error";
+		}else{
+			return new User($q->fetch(PDO::FETCH_ASSOC));
+		}
+	}
+	
 	public function updateLogged(User $user){
 		$q = $this->_db->prepare("UPDATE users SET logged = :logged WHERE id = :id");
 		$q->bindValue(':logged', $user->logged());
