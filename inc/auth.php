@@ -86,13 +86,14 @@ if(isset($_POST) && !empty($_POST['user'])){
 		<meta name="bingbot" content="noimageindex">
 		<meta name="Slurp" content="noimageindex">
 		<link rel="stylesheet" href="css/style.css"/>
-		<title>KNS7 Images - Authentification</title>
+		<link rel="stylesheet" type="text/css" href="<?php echo $style_url;?>" media="screen"/>
+		<title><?php echo $title_tool;?> - Authentification</title>
 	</head>
 	<body>
 		<section class="auth-form">
 			<div class="auth-logo"></div>
 			<form id="login" method="post">
-				<p>Merci de vous authentifier pour avoir acc&egrave;s &agrave; l'outil <strong>Images T4Zone</strong><br/>Vous devez pour cela, utiliser votre compte du <a href="http://t4zone.info/forum/">Forum T4zone</a>.</p>
+				<p>Plateforme d'hébergement d'images KNS7. L'accès est strictement réservé aux membres.</p>
 				<input type='text' id='user' name='user' value="nom d'utilisateur"/><br/>
 				<input type='password' id='pwd' name='pwd' value="Password"/><br/>
 				<input type='submit' value="Connexion"/>

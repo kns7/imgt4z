@@ -11,10 +11,10 @@ class ImagesManager{
 	}
 	
 	public function add(Image $image){
-		$q = $this->_db->prepare("INSERT INTO images (timestamp,orientation,categorieid,userid,title,dateadd,width,height) VALUES(:timestamp,:orientation,:categorieid,:userid,:title,:dateadd,:width,:height)");
+		$q = $this->_db->prepare("INSERT INTO images (timestamp,orientation,albumid,userid,title,dateadd,width,height) VALUES(:timestamp,:orientation,:albumid,:userid,:title,:dateadd,:width,:height)");
 		$q->bindValue(":timestamp",$image->timestamp(), PDO::PARAM_STR);
 		$q->bindValue(":orientation",$image->orientation(), PDO::PARAM_INT);
-		$q->bindValue(":categorieid",$image->categorieid(), PDO::PARAM_INT);
+		$q->bindValue(":albumid",$image->albumid(), PDO::PARAM_INT);
 		$q->bindValue(":userid",$_SESSION['user_id'], PDO::PARAM_INT);
 		$q->bindValue(":title",$image->title(), PDO::PARAM_STR);
 		$q->bindValue(":dateadd",date("Y-m-d H:i:s"),PDO::PARAM_STR);
@@ -44,7 +44,7 @@ class ImagesManager{
 	
 	public function get($id){
 		$id = (int) $id;
-		$q = $this->_db->prepare("SELECT images.id as id, timestamp, orientation, categorieid, categories.name as categorie, userid, title, dateadd, width, height FROM images Inner Join categories ON images.categorieid = categories.id WHERE images.id = :id");
+		$q = $this->_db->prepare("SELECT images.id as id, timestamp, orientation, albumid, albums.name as album, userid, title, dateadd, width, height FROM images Inner Join albums ON images.albumid = albums.id WHERE images.id = :id");
 		$q->bindValue(':id',$id);
 		$q->execute();
 		
@@ -53,7 +53,7 @@ class ImagesManager{
 	
 	public function getList($userid){
 		$images = array();
-		$q = $this->_db->prepare("SELECT images.id as id, timestamp, orientation, categorieid, categories.name as categorie, userid, title, dateadd, width, height FROM images Inner Join categories ON images.categorieid = categories.id WHERE userid = :userid ORDER BY dateadd DESC");
+		$q = $this->_db->prepare("SELECT images.id as id, timestamp, orientation, albumid, albums.name as album, userid, title, dateadd, width, height FROM images Inner Join albums ON images.albumid = albums.id WHERE userid = :userid ORDER BY album ASC, dateadd DESC");
 		$q->bindValue(':userid',$userid);
 		$q->execute();
 		
@@ -67,8 +67,8 @@ class ImagesManager{
 		$limit = 10;
 		$images = array();
 		$q = $this->_db->prepare("
-			SELECT images.id as id, timestamp, orientation, categorieid, categories.name as categorie, userid, title, dateadd, width, height 
-			FROM images Inner Join categories ON images.categorieid = categories.id 
+			SELECT images.id as id, timestamp, orientation, albumid, albums.name as album, userid, title, dateadd, width, height 
+			FROM images Inner Join albums ON images.albumid = albums.id 
 			WHERE userid = :userid 
 			ORDER BY dateadd DESC 
 			LIMIT $start, $limit");
@@ -84,8 +84,8 @@ class ImagesManager{
 	}
 	
 	public function update(Image $image){
-		$q = $this->_db->prepare("UPDATE images SET categorieid = :categorieid, title = :title WHERE id = :id");
-		$q->bindValue(':categorieid', $image->categorieid(), PDO::PARAM_INT);
+		$q = $this->_db->prepare("UPDATE images SET albumid = :albumid, title = :title WHERE id = :id");
+		$q->bindValue(':albumid', $image->albumid(), PDO::PARAM_INT);
 		$q->bindValue(':title', $image->title(), PDO::PARAM_STR);
 		$q->bindValue(':id', $image->id(), PDO::PARAM_INT);
 		return $q->execute();

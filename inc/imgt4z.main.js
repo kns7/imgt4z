@@ -5,13 +5,17 @@ http://www.script-tutorials.com/pure-html5-file-upload/
 
 var rpcfile = "inc/ajax_rpc.php"; /* Fichier PHP pour les requêtes AJAX */
 var jsonarray = new Object(); /* JSON Array avec toutes les informations (Images/Categories/Help) */
-var currentimage = new Object(); /* Image Actuelle */
+var image = new Object(); /* Image Actuelle */
+var album = new Object(); /* Album actuel */
 var smartphone = false; /* Navigation sur Smartphone? */
 var pagination = new Object(); /* Informations de Pagination des images */
 pagination.step = 10;
 pagination.start = 0;
 pagination.end = 10;
 var maxuploadsize = 5242880;
+var current = new Object();
+current.album = 0;
+current.image = 0;
 
 var ordre = new Object(); /* Ordre d'affichage des images */
 ordre.field = "dateadd";
@@ -42,22 +46,43 @@ $(document).ready(function(){
 	.on("click","#showmenu",function(){
 		hideshowMenu(true);
 	})
+	/* Liste des images d'un album, clic sur un album */
+	.on("click",".album-bloc",function(){
+		$(".loader").show();
+		var albid = $(this).attr('id').split("_");
+		current.album = albid[1];
+		for(var i = 0; i < jsonarray.albums.length; i++){
+			if(jsonarray.albums[i]['id'] == current.album){
+				album = jsonarray.albums[i];
+			}
+		}
+		var action = 'images';
+		console.log("Album block Click => View Album ID: "+current.album);
+		$("#global").removeClass().hide().html("");
+		buildTemplate(action);
+	})
 	
 	/* Edition d'une image, clic sur une image de la galerie */
 	.on("click",".img-bloc",function(){
 		$(".loader").show();
 		var imgid = $(this).attr('id').split("_");
+		current.image = imgid[1];
+		for(i=0;i< album.images.length;i++){
+			if(album.images[i].id == current.image){ 
+				image = album.images[i];
+			}
+		}
 		var action = 'image';
-		console.log("Image block Click => View Image ID: "+imgid[1]);
+		console.log("Image block Click => View Image ID: "+current.image);
 		$("#global").removeClass().hide().html("");
-		buildTemplate(action,imgid[1]);
+		buildTemplate(action);
 	})
 	
 	/* Selectionner le texte en cliquant sur le Textarea */
 	.on("click","textarea",function(){ if(!smartphone){ this.select();} })
 	
-	/* Sauvegarder les changements de categorie et titre */
-	.on("change","#imagecategorie,#imagetitle",function(){
+	/* Sauvegarder les changements de album et titre */
+	.on("change","#imagealbum,#imagetitle",function(){
 		var imgid = $("#imageid").val();
 		var what = $(this).attr('id');
 		var val = $(this).val();
@@ -72,7 +97,7 @@ $(document).ready(function(){
 			reloadJson();
 			var d = JSON.parse(data);
 			if(d.result == 1){
-				if(what == "imagecategorie"){ $(".categorie-icon").css({'background-image': "url('../img/categories/32/cat_"+val+".png')"}); }
+				if(what == "imagealbum"){ $(".album-icon").css({'background-image': "url('../img/albums/32/cat_"+val+".png')"}); }
 				$("#"+what).css({'background-image': 'url("../img/valid.png")', 'border-color': "#00FF00"});
 			}else{
 				$("#"+what).css({'background-image': 'url("../img/error.png")', 'border-color': "#FF0000"});
@@ -86,7 +111,7 @@ $(document).ready(function(){
 		if(!($(this).hasClass('disable'))){
 			var what = $(this).attr('rel');
 			console.log("Clicked on a Button: ["+what+"]");
-			if($(this).attr('rev') != "noload"){ $(".loader").show(); }
+			if(!$(this).hasClass("noload")){ $(".loader").show(); }
 			if($(this).hasClass("withoverlay")){ $(".overlay").show(); }
 			/* On test si le bouton a l'attribut rev qui contient l'ID de l'image, sinon on prend le input caché #imageid */
 			if(typeof($(this).attr('rev')) != "undefined"){ var imgid = $(this).attr('rev'); }else{ var imgid = $("#imageid").val(); }
@@ -102,6 +127,12 @@ $(document).ready(function(){
 					}
 					$("#imgpreview").css({width: w, height: h});
 					$(".loader").fadeOut();
+				break;
+				
+				case "backto":
+					/* Retour à l'album */
+					console.log("  => Back to Album (ID:"+current.album);
+					buildTemplate('images');
 				break;
 
 				case "rotatel":
@@ -134,9 +165,25 @@ $(document).ready(function(){
 					}
 				break;
 				
+				case "deletealbum":
+					/* Suppression de l'album (et de toutes ses images) */
+					if(confirm("Veux-tu définitivement supprimer cet album et TOUTES les images qu'il contient?")){
+						console.log("  => Deleting album");
+						$.post(rpcfile,{ action: 'btn', what: what, imgid: imgid },function(data){
+							reloadJson();
+							d = JSON.parse(data);
+							if(d.result == 1){
+								buildTemplate('albums');
+							}
+						});
+					}else{
+						return false;
+					}
+				break;
+				
 				case "show":
 					/* Affiche ou cache le menu du nbr d'images affichées */
-					if($(".btn-menu[rel='show']").is('Visible')){
+					if($(".btn-menu[rel='show']").is(':visible')){
 						$(".btn-menu[rel='show']").hide();
 					}else{
 						$(".btn-menu[rel='show']").show();
@@ -185,69 +232,102 @@ $(document).ready(function(){
 	})
 	
 	/* Changement de l'icone Categorie en changeant le select */
-	.on("change","#image-categorie",function(){
-		$(".categorie-icon").css({'background-image': "url('../img/categories/32/cat_"+$(this).val()+".png')"});
+	.on("change","#image-album",function(){
+		$(".album-icon").css({'background-image': "url('../img/albums/32/cat_"+$(this).val()+".png')"});
 	})
 });
 
 /* Fonctions */
-function buildTemplate(template,id){
+function buildTemplate(template){
 	console.log("Call function *buildTemplate* => ["+template+"]");
 	$(".loader").show();
-	if(id === undefined){ id = 0; }
 	var d = jsonarray;
 	$("#global").removeClass().hide().html("").addClass(template);
 	switch(template){
+		case "albums":
+			current.image = 0;
+			current.album = 0;
+			image = "";
+			album = "";
+			$("#global").append(albumbloc);
+			$("#album_0").append(img,infos);
+			if(d.hasOwnProperty('albums')){
+				for(var i = 0; i < d.albums.length ; i++){
+					var albumbloc = $("<div>",{
+						id: 'album_'+d.albums[i].id,
+						class: 'album-bloc'
+					});
+					var img = $("<div>",{
+						class: 'img',
+						html: "<img src='/img/album_64.png'/>"
+					});
+					var infos = $("<div>",{
+						class: 'infos',
+						html: "<div class='title'>"+d.albums[i].name+"</div><div class='btn delete' rel='deletealbum' rev='"+d.albums[i].id+"' title='Supprimer'></div>"
+					});
+					$("#global").append(albumbloc);
+					$("#album_"+d.albums[i].id).append(img,infos);
+				}
+				var clear = $("<div>",{ class: 'clear'});
+				var imgmenu = $("<div>",{ class: 'img-menu', text: d.albums.length +' albums'});			
+				imgmenu.append(clear);
+				resizeBlocs();
+				$("#global").append(clear,imgmenu);
+			}
+		break;
+		
 		case "images":
-			if(d.hasOwnProperty('images')){
+			current.image = 0;
+			image = "";
+			if(album.hasOwnProperty('images')){
 				pagination.end = Math.round(pagination.start + pagination.step);
 				var timestamp = Math.round(+new Date() / 1000);
-				if(pagination.end > d.images.length){
-					var limit = d.images.length;
+				if(pagination.end > album.images.length){
+					var limit = album.images.length;
 				}else{
 					var limit = pagination.end;
 				}
 				console.log("  => Affichage des Images depuis "+pagination.start +" jusqu'à "+ pagination.end);
 				for(var i = pagination.start; i < limit; i++){
-					var image = d.images[i];
 					/* Test if Title is filled */
-					if(image.title == ""){ var title = "Sans Titre"; }else{ var title = image.title; }
+					if(album.images[i].title == ""){ var title = "Sans Titre"; }else{ var title = album.images[i].title; }
 					/* Test Image orientation */
-					if(image.orientation == "1"){
+					if(album.images[i].orientation == "1"){
 						/* Vertical */
-						if(image.width < '150'){
-							w = image.width;
+						if(album.images[i].width < '150'){
+							w = album.images[i].width;
 						}else{
 							w = "150"
 						}
 					}else{
 						/* Horizontal */
-						if(image.width < '200'){
-							w = image.width;
+						if(album.images[i].width < '200'){
+							w = album.images[i].width;
 						}else{
 							w = "200"
 						}
 					}
 					var imgbloc = $("<div>",{
-						id: 'image_'+image.id,
+						id: 'image_'+album.images[i].id,
 						class: 'img-bloc'
 					});
 					var img = $("<div>",{
 						class: 'img',
-						html: "<img src='/storage/"+image.userid+"/"+image.timestamp+".jpg?t="+timestamp+"' width='"+w+"'/>"
+						html: "<img src='/storage/"+album.images[i].userid+"/"+album.images[i].timestamp+".jpg?t="+timestamp+"' width='"+w+"'/>"
 					});
 					var infos = $("<div>",{
 						class: 'infos',
-						html: "<div class='title' rel='"+image.categorie+"'>"+title+"<br/><em>"+image.dateadd+"</em></div><div class='btn delete' rel='delete' rev='"+image.id+"' title='Supprimer'></div>"
+						html: "<div class='title' rel='"+album.images[i].album+"'>"+title+"<br/><em>"+album.images[i].dateadd+"</em></div><div class='btn delete' rel='delete' rev='"+album.images[i].id+"' title='Supprimer'></div>"
 					});
 					$("#global").append(imgbloc);
-					$("#image_"+image.id).append(img,infos);
+					$("#image_"+album.images[i].id).append(img,infos);
 				}
 				var clear = $("<div>",{ class: 'clear'});
-				var imgmenu = $("<div>",{ class: 'img-menu', text: d.storage.elements +' images'});
+				if(album.images.length >= 1){ var txtimg = "image"; }else{ var txtimg = "images"; }
+				var imgmenu = $("<div>",{ class: 'img-menu', text: album.name +': '+album.images.length +' '+txtimg});
 				var btnfilter = $("<div>",{class: 'btn', rel: 'filter'});
 				var btnshowmenu = $("<div>",{class: 'btn-menu', rel: 'show'});
-				var btnshow = $("<div>",{class: 'btn', rel: 'show', rev: 'noload', amount: '0'});
+				var btnshow = $("<div>",{class: 'btn noload', rel: 'show', amount: '0'});
 				var btnshow10 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '10'});
 				var btnshow20 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '20'});
 				var btnshow50 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '50'});
@@ -265,28 +345,25 @@ function buildTemplate(template,id){
 				if(pagination.start == 0){
 					$(".btn[rel='prev']").addClass('disable');
 				}
-				if(pagination.end >= d.images.length){
+				if(pagination.end >= album.images.length){
 					$(".btn[rel='next']").addClass('disable');
 				}
 			}else{
-				$("#global").append("<div class='noresults'>Tu n'as aucune image dans ta bibliothèque!</div>");
+				$("#global").append("<div class='noresults'>Tu n'as aucune image dans cet album!</div>");
 			}
 		break;
 		
 		case "image":
-			for(i=0;i< d.images.length;i++){
-				if(d.images[i].id == id){ currentimage = d.images[i];}
-			}
-			if(currentimage.id === undefined){
+			if(image.id === undefined){
 				$("#global").append("<div class='noresults'>L'image demandée n'a pas été trouvée...</div>");
 			}else{
 				var timestamp = Math.round(+new Date() / 1000);
-				if(currentimage.title == ""){ var title = ""; }else{ var title = currentimage.title; }
-				if(currentimage.orientation == "1"){ classOrientation = "vertical"; }else{ classOrientation = "horizontal"; }
+				if(image.title == ""){ var title = ""; }else{ var title = image.title; }
+				if(image.orientation == "1"){ classOrientation = "vertical"; }else{ classOrientation = "horizontal"; }
 				
 				var imgdetail = $("<div>",{ class: "img-detail"});
 				var imgpreview = $("<div>",{ class: "img-preview" });
-				var img = $("<img>",{ id: "imgpreview", class: classOrientation, src: '/storage/'+currentimage.userid+'/'+currentimage.timestamp+'.jpg?t='+timestamp});
+				var img = $("<img>",{ id: "imgpreview", class: classOrientation, src: '/storage/'+image.userid+'/'+image.timestamp+'.jpg?t='+timestamp});
 				var imgctrl = $("<div>",{class: "img-ctrl"});
 				var imgedit = $("<div>",{class: "img-edit", html: "<table></table>"});
 				var imgprev = $("<div>",{class: "img-prev", image: ""});
@@ -294,44 +371,43 @@ function buildTemplate(template,id){
 				
 				/* Buttons for Actions */
 				var imgactions = $("<div>",{class: "img-actions"});
-				var btndelete = $("<div>",{class: "btn withoverlay", rel: "delete"});
-				var btnrotater = $("<div>",{class: "btn withoverlay", rel: "rotater"});
-				var btnrotatel = $("<div>",{class: "btn withoverlay", rel: "rotatel"});
-				var btnresize = $("<div>",{class: "btn", rel: "resize"});
-				var imgid = $("<input>",{id: "imageid", value: currentimage.id, type: "hidden"});
+				var btndelete = $("<div>",{class: "btn withoverlay", rel: "delete", title: "Supprimer l'image"});
+				var btnrotater = $("<div>",{class: "btn withoverlay", rel: "rotater", title: "Rotation sur la droite"});
+				var btnrotatel = $("<div>",{class: "btn withoverlay", rel: "rotatel", title: "Rotation sur la gauche"});
+				var btnbackto = $("<div>",{class: "btn", rel: "backto", title: "Retour à l'album"});
+				//var btnresize = $("<div>",{class: "btn", rel: "resize", title: "Redimensionner"});
+				var imgid = $("<input>",{id: "imageid", value: image.id, type: "hidden"});
 				
 				/* Categories */
-				var select = $("<select>",{id: "imagecategorie"});
-				if(d.categories.length > 0){
-					for(var i = 0; i < d.categories.length; i++){
-						var categorie = d.categories[i];
-						if(categorie.id == currentimage.categorie){
-							var option = $("<option>",{ value: categorie.id, text: categorie.name, selected: 'selected' });
+				var select = $("<select>",{id: "imagealbum"});
+				if(d.albums.length > 0){
+					for(var i = 0; i < d.albums.length; i++){
+						if(d.albums[i].id == image.album){
+							var option = $("<option>",{ value: d.albums[i].id, text: d.albums[i].name, selected: 'selected' });
 						}else{ 
-							var option = $("<option>",{ value: categorie.id, text: categorie.name });
+							var option = $("<option>",{ value: d.albums[i].id, text: d.albums[i].name });
 						}
 						select.append(option);
 					}
 				}
 				
-				imgactions.append(btndelete,btnrotater,btnrotatel,btnresize);
+				imgactions.append(btndelete,btnrotater,btnrotatel,btnbackto);
 				imgctrl.append(imgedit,imgactions,imgid);
 				imgpreview.append(img);
 				imgdetail.append(imgpreview,imgctrl);
 				
 				$("#global").append(imgdetail);
 				if(smartphone){
-					$("table").append("<tr><th>Catégorie</th></tr><tr><td id='selection'><div class='categorie-icon'></div></td></tr>");
+					$("table").append("<tr><th>Album</th></tr><tr><td id='selection'></td></tr>");
 					$("#selection").append(select);
 					$("table").append("<tr><th>Titre</th></tr><tr><td><input type='text' id='imagetitle' value='"+title+"'/></td></tr>");
-					$("table").append("<tr><th>Lien pour le Forum</th></tr><tr><td><textarea readonly>[img]http://img.t4zone.org/i.php?i="+currentimage.timestamp+"d"+currentimage.userid+"[/img]</textarea></td></tr>");
+					$("table").append("<tr><th>Lien pour le Forum</th></tr><tr><td><textarea readonly>[img]http://img.t4zone.org/i.php?i="+image.timestamp+"d"+image.userid+"[/img]</textarea></td></tr>");
 				}else{
-					$("table").append("<tr><th>Catégorie</th><td id='selection'><div class='categorie-icon'></div></td></tr>");
+					$("table").append("<tr><th>Album</th><td id='selection'></td></tr>");
 					$("#selection").append(select);
 					$("table").append("<tr><th>Titre</th><td><input type='text' id='imagetitle' value='"+title+"'/></td></tr>");
-					$("table").append("<tr><th>Lien pour le Forum</th><td><textarea readonly>[img]http://img.t4zone.org/i.php?i="+currentimage.timestamp+"d"+currentimage.userid+"[/img]</textarea></td></tr>");
+					$("table").append("<tr><th>Lien pour le Forum</th><td><textarea readonly>[img]http://img.t4zone.org/i.php?i="+image.timestamp+"d"+image.userid+"[/img]</textarea></td></tr>");
 				}
-				$(".categorie-icon").css({'background-image': "url('../img/categories/32/cat_"+currentimage.categorie+".png')"});
 			}
 		break;
 		
@@ -348,14 +424,13 @@ function buildTemplate(template,id){
 				class: "upload-btns",
 				html: "<div class='btn withoverlay' rel='send'>Envoyer</div><div class='btn' rel='cancel'>Annuler</div><div class='clear'></div>"
 			});
-			var select = $("<select>",{id: "categorie"});
-			if(d.categories.length > 0){
-					for(var i = 0; i < d.categories.length; i++){
-						var categorie = d.categories[i];
-					if(categorie.id == 1){ 
-						var option = $("<option>",{ value: categorie.id, text: categorie.name, selected: 'selected' });
+			var select = $("<select>",{id: "album"});
+			if(d.albums.length > 0){
+					for(var i = 0; i < d.albums.length; i++){
+					if(d.albums[i].id == 1){ 
+						var option = $("<option>",{ value: d.albums[i].id, text: d.albums[i].name, selected: 'selected' });
 					}else{
-						var option = $("<option>",{ value: categorie.id, text: categorie.name });
+						var option = $("<option>",{ value: d.albums[i].id, text: d.albums[i].name });
 					}
 					select.append(option);
 				}
@@ -364,11 +439,11 @@ function buildTemplate(template,id){
 			if(smartphone){
 				$("table").append("<tr><th>Fichier image</th></tr><tr><td><input type='file' id='file' name='file'/></td></tr>");
 				$("table").append("<tr><th>Titre</th></tr><tr><td><input type='text' id='title' name='title' value=''/></td></tr>");
-				$("table").append("<tr><th>Catégorie</th></tr><tr><td id='selection'><div class='categorie-icon'></div></td></tr>");
+				$("table").append("<tr><th>Album</th></tr><tr><td id='selection'><div class='album-icon'></div></td></tr>");
 			}else{
 				$("table").append("<tr><th>Fichier image</th><td><input type='file' id='file' name='file'/></td></tr>");
 				$("table").append("<tr><th>Titre</th><td><input type='text' id='title' name='file' value=''/></td></tr>");
-				$("table").append("<tr><th>Catégorie</th><td id='selection'><div class='categorie-icon'></div></td></tr>");
+				$("table").append("<tr><th>Album</th><td id='selection'><div class='album-icon'></div></td></tr>");
 			}
 			$("#selection").append(select);
 		break;
@@ -456,7 +531,7 @@ function uploadSuccess(responseText, statusText, xhr, $form){
 	$.post(rpcfile,{
 		action: 'newimage',
 		title: $("#title").val(),
-		categorieid: $("#categorie").val(),
+		albumid: $("#album").val(),
 		timestamp: d.timestamp,
 		orientation: d.orientation,
 		width: d.width,

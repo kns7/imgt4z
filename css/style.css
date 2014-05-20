@@ -185,7 +185,7 @@ nav ul .menu {
 }
 nav ul .menu[rel=back]{ background-image: url('../img/menu_back.png'); display: none; }
 nav ul .menu[rel=upload]{ background-image: url('../img/menu_upload.png'); }
-nav ul .menu[rel=images]{ background-image: url('../img/menu_images.png'); }
+nav ul .menu[rel=albums]{ background-image: url('../img/menu_images.png'); }
 nav ul .menu[rel=home]{ background-image: url('../img/menu_home.png'); }
 nav ul .menu[rel=logout]{ background-image: url('../img/menu_logout.png'); }
 nav ul .menu:hover,nav ul li.active { background-color: #010101; }
@@ -282,7 +282,8 @@ table td input[type=file]{
 	padding-top: 4px;
 }
 
-/* Sections Mes Images */
+/* Section Mes Albums */
+/* Sections Mes Images (dans un album)*/
 .images {
 	
 }
@@ -300,7 +301,7 @@ table td input[type=file]{
 	line-height: 42px;
 }
 
-.images .img-bloc {
+.images .img-bloc,.albums .album-bloc {
 	float: left;
 	width: 200px;
 	height: 200px;
@@ -312,7 +313,12 @@ table td input[type=file]{
 	text-align: center;
 	background: white;
 }
-.images .img-bloc:hover {
+.albums .album-bloc{
+	width: 120px;
+	height: 100px;
+	position: relative;
+}
+.images .img-bloc:hover, .albums .album-bloc:hover {
 	border: 1px solid #FF9900;
 	box-shadow: 0px 0px 10px #FF9900;
 }
@@ -321,12 +327,12 @@ table td input[type=file]{
 	height: 150px;
 	overflow: hidden;
 }
-.images .img-bloc .infos {
+.images .img-bloc .infos, .albums .album-bloc .infos{
 	line-height: 50px;
 	height: 50px;
 	display: inline;
 }
-.img-bloc .infos .title {
+.img-bloc .infos .title, .albums .album-bloc .title {
 	font-family: helvetica, sans-serif;
 	font-weight: bold;
 	color: #808080;
@@ -343,18 +349,17 @@ table td input[type=file]{
 	background-position: 0px 7px;
 	background-repeat: no-repeat;
 }
-.img-bloc .infos .title[rel='1']{background-image: url('../img/categories/16/cat_1.png');}
-.img-bloc .infos .title[rel='2']{background-image: url('../img/categories/16/cat_2.png');}
-.img-bloc .infos .title[rel='3']{background-image: url('../img/categories/16/cat_3.png');}
-.img-bloc .infos .title[rel='4']{background-image: url('../img/categories/16/cat_4.png');}
-.img-bloc .infos .title[rel='5']{background-image: url('../img/categories/16/cat_5.png');}
-.img-bloc .infos .title[rel='6']{background-image: url('../img/categories/16/cat_6.png');}
+.albums .album-bloc .title {
+	text-align: center;
+	width: 120px;
+	padding: 0px;
+}
 
 .img-bloc .infos .title em {
 	font-size: 11px;
 	font-weight: normal;
 }
-.img-bloc .infos .delete {
+.img-bloc .infos .delete, .albums .album-bloc .delete {
 	width: 20px;
 	height: 20px;
 	background: #808080 url('../img/delete_16.png') 50% no-repeat;
@@ -365,10 +370,19 @@ table td input[type=file]{
 	margin: 20px 0px 0px 20px;
 	opacity: 0.5;
 }
-.img-bloc .infos .delete:hover {
+.img-bloc .infos .delete:hover, .albums .album-bloc .delete:hover {
 	background-color: #E01200;
 	opacity: 0.8;
 }
+
+.albums .album-bloc .delete {
+	margin: 11px 5px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+
+/* Detail d'une image */
 .img-detail{
 	width: 800px;
 	padding: 20px;
@@ -444,6 +458,7 @@ table td input[type=file]{
 .img-actions .btn { float: right; }
 .img-menu .btn { float: left; }
 
+.btn[rel='backto']{ background-image: url('../img/backto_24.png');}
 .btn[rel='resize']{ background-image: url('../img/resize_24.png'); display: none;}
 .btn[rel='rotatel']{ background-image: url('../img/rotate_left_24.png'); }
 .btn[rel='rotater']{ background-image: url('../img/rotate_right_24.png'); }
@@ -461,267 +476,3 @@ table td input[type=file]{
 .btn[rel='delete']:hover { background-color: #DD7A73; }
 .btn.active { background-color: #FFD387; }
 .btn.disable { background-color: #917E5F; cursor: normal; opacity: 0.5;}
-
-/* 
-Standard Smartphones, Reglages globaux
-*/
-@media screen and (max-width: 499px){
-	body { overflow-x: hidden; }
-	nav ul .menu {
-		height: 94px;
-		padding-top: 0px;
-		color: transparent;
-		background-position: 50% 50%;
-	}
-	nav ul .menu[rel=back]{ display: block; }
-	.images .img-bloc{ margin: 5px; }
-	.img-menu{ width: 250px; }
-	.img-detail { padding: 10px; }
-	#global.images{  margin-bottom: 114px; }
-	#global.image{ padding: 10px; margin-bottom: 20px;}
-	#global.upload{ margin-bottom: 20px;}
-	.btn[rel='prev']{ margin-right: 5px; }
-	table th { text-align: center; }
-	table td input{ width: 100%; }
-	table td select { width: 186px; }
-	table td textarea { width: 100%; font-size: 8px;}
-	.img-edit { padding-top: 55px; }
-	.img-actions { top: 5px; }
-}
-/* 
-Petits Smartphones (Largeur 240px) 
-	- Galaxy Wave
-*/
-@media screen and (width: 240px){
-	.loader{
-		left: 50px;
-		top: 90px;
-	}
-	#global.images { padding-left: 1px; }
-	.images .img-bloc { padding: 5px; }
-	.img-menu {
-		width: 210px;
-		left: 1px;
-		bottom: 1px;
-		padding: 5px;
-	}
-	.help { width: 133px; }
-	.upload-form {width: 165px; }
-	.btn[rel='prev']{ margin-right: 35px; }
-	.btn[rel='cancel'],.btn[rel='send']{ margin-right: 30px; }
-	table th { text-align: center; }
-	table td input{ width: 100%; }
-	table td select { width: 103px; }
-	table td textarea { width: 100%; font-size: 8px;}
-	
-	.img-detail {
-		padding: 5px;
-		width: 195px;
-	}
-	#imgpreview.horizontal {
-		width: 195px;
-		/*height: 146px;*/
-	}
-	#imgpreview.vertical {
-		width: 146px;
-		/*height: 195px;*/
-	}
-	.img-edit { padding-top: 55px; }
-	.img-actions { top: 5px; right: 20px; }
-	.img-actions .btn { margin: 5px 10px; }
-}
-/*
-Smartphones (Largeur 320px)
-	 - Galaxy S, S2
-	 - Nokia Lumia
-	 - iPhone 3, 4, 4s, 5, 5s
-*/
-@media screen and (width: 320px){
-	.loader{
-		left: 90px;
-		top: 216px;
-	}
-	#global.images{ padding-left: 40px; }
-	.img-menu{ left: 20px; }
-	.help { width: 213px; }
-	.upload-form, .upload-btns {width: 245px; }
-	.btn[rel='cancel']{ margin-right: 30px; }
-	table th { text-align: center; }
-	table td input{ width: 228px; }
-	table td select { width: 186px; }
-	table td textarea { width: 228px; font-size: 8px;}
-	.img-detail{ width: 265px; }
-	#imgpreview.horizontal {
-		width: 265px;
-		/*height: 199px;*/
-	}
-	#imgpreview.vertical {
-		width: 199px;
-		/*height: 265px;*/
-	}
-	.img-actions{ right: 40px; }
-	.img-actions .btn { margin: 5px 15px; }
-}
-
-
-/* 
-Smartphones (Largeur 360px) 
-	- Galaxy S3
-	- Galaxy Nexus
-	- Galaxy Note II
-	- HTC One
-	- Blackberry Q10
-*/
-@media screen and (width: 360px){
-	.loader{
-		left: 110px;
-		top: 216px;
-	}
-	#global.images { padding-left: 50px; }
-	.img-menu { left: 35px; }
-	.help{ width: 257px; }
-	.upload-form, .upload-btns {width: 290px; }
-	.btn[rel='cancel']{ margin-right: 75px; }
-	table th { text-align: center; }
-	table td select { width: 228px; }
-	table td textarea { font-size: 8px;}
-	
-	.img-detail {
-		padding: 10px;
-		width: 310px;
-	}
-	#imgpreview.horizontal {
-		width: 310px;
-		height: 232px;
-	}
-	#imgpreview.vertical {
-		width: 232px;
-		height: 310px;
-	}
-	.img-actions { right: 30px; }
-	.img-actions .btn { margin: 5px 25px; }
-}
-
-
-/* 
-Smartphones (Largeur 384px)
-	- Nokia Lumia
-	- Nexus 4
-	- Blackberry Z10
-*/
-@media screen and (width: 384px){
-	.loader{
-		left: 122px;
-		top: 216px;
-	}
-	#global.images { padding-left: 65px; }
-	.img-menu { left: 45px; }
-	.help{ width: 277px; }
-	.upload-form, .upload-btns {width: 310px; }
-	.btn[rel='cancel']{ margin-right: 75px; }
-	table th { text-align: center; }
-	table td select { width: 248px; }
-	table td textarea { font-size: 8px;}
-	
-	.img-detail {
-		padding: 10px;
-		width: 330px;
-	}
-	#imgpreview.horizontal {
-		width: 330px;
-		height: 248px;
-	}
-	#imgpreview.vertical {
-		width: 248px;
-		height: 330px;
-	}
-	.img-actions { right: 30px; }
-	.img-actions .btn { margin: 5px 25px; }
-}
-
-/* 
-Smartphones (Largeur 400px)
-	- Galaxy Note
-*/
-@media screen and (width: 400px){
-	.loader{
-		left: 122px;
-		top: 216px;
-	}
-	#global.images { padding-left: 65px; }
-	.img-menu { left: 45px; }
-	.help{ width: 257px; }
-	.upload-form, .upload-btns {width: 290px; }
-	.btn[rel='cancel']{ margin-right: 75px; }
-	table th { text-align: center; }
-	table td select { width: 228px; }
-	table td textarea { font-size: 8px;}
-	
-	.img-detail {
-		padding: 10px;
-		width: 310px;
-	}
-	#imgpreview.horizontal {
-		width: 310px;
-		height: 232px;
-	}
-	#imgpreview.vertical {
-		width: 232px;
-		height: 310px;
-	}
-	.img-actions { right: 30px; }
-	.img-actions .btn { margin: 5px 25px; }
-}
-
-/* 
-Mini Tablettes (Largeur 480px) 
-	- Amazon Kindle Fire 7"
-*/
-@media screen and (width: 480px){
-	.loader{
-		left: 170px;
-		top: 216px;
-	}
-	#global.images { padding: 0px; }
-	.images .img-bloc{ margin: 4px; }
-	.img-menu { left: 10px; width: 425px }
-	.help{ width: 387px; }
-	.upload-form, .upload-btns {width: 420px; }
-	.btn[rel='cancel']{ margin-right: 205px; }
-	.btn[rel='prev']{ margin-right: 5px; }
-	table th { text-align: center; }
-	table td select { width: 358px; }
-	table td textarea { font-size: 8px;}
-	
-	.img-detail {
-		padding: 10px;
-		width: 440px;
-	}
-	#imgpreview.horizontal {
-		width: 440px;
-		height: 330px;
-	}
-	#imgpreview.vertical {
-		width: 330px;
-		height: 440px;
-	}
-	.img-actions { right: 30px; }
-	.img-actions .btn { margin: 5px 50px; }
-}
-@media screen and (min-height: 421px) and (max-height: 450px){
-	nav ul .menu { height: 85px; }
-}
-@media screen and (min-height: 400px) and (max-height: 420px){
-	nav ul .menu { height: 80px; }
-}
-@media screen and (max-height: 399px){
-	nav ul .menu { height: 72px; }
-}
-@media screen and (max-height: 320px){
-	nav ul .menu[rel=back]{ background-image: url('../img/menu_back_48.png'); }
-	nav ul .menu[rel=upload]{ background-image: url('../img/menu_upload_48.png'); }
-	nav ul .menu[rel=images]{ background-image: url('../img/menu_images_48.png'); }
-	nav ul .menu[rel=home]{ background-image: url('../img/menu_home_48.png'); }
-	nav ul .menu[rel=logout]{ background-image: url('../img/menu_logout_48.png'); }
-	nav ul .menu { height: 62px; }
-}

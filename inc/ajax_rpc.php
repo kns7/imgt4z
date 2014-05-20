@@ -4,16 +4,16 @@ session_start();
 include('config.php');
 /* Include Classes */
 include('class/UsersManager.class.php');
-include('class/CategoriesManager.class.php');
+include('class/AlbumsManager.class.php');
 include('class/ImagesManager.class.php');
 include('class/User.class.php');
-include('class/Categorie.class.php');
+include('class/Album.class.php');
 include('class/Image.class.php');
 
 /* Create PDO Connector for Images */
 $imagesManager = new ImagesManager($conn_img);
-/* Create PDO Connector for Categories */
-$categoriesManager = new CategoriesManager($conn_img);
+/* Create PDO Connector for Albums */
+$albumsManager = new AlbumsManager($conn_img);
 /* Create PDO Connector for Users */
 $usersManager = new UsersManager($conn_img);
 
@@ -23,33 +23,35 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 	$rArray = array();
 	switch($_POST['action']){
 		case "initload":
+			/* Albums */
+			$albums = $albumsManager->getList($_SESSION['user_id']);
+			$count_albums = $albumsManager->count($_SESSION['user_id']);
 			/* Images */
 			$images = $imagesManager->getList($_SESSION['user_id']);
 			$count = $imagesManager->count($_SESSION['user_id']);
-			$rArray['storage'] = $count;
-			if(!empty($images)){
-				$i = 0;
-				foreach($images as $image){
-					$rArray['images'][$i]['id'] = $image->id();
-					$rArray['images'][$i]['timestamp'] = $image->timestamp();
-					$rArray['images'][$i]['title'] = $image->title();
-					$rArray['images'][$i]['orientation'] = $image->orientation();
-					$rArray['images'][$i]['categorie'] = $image->categorieid();
-					$rArray['images'][$i]['dateadd'] = $image->dateadd();
-					$rArray['images'][$i]['userid'] = $image->userid();
-					$rArray['images'][$i]['width'] = $image->width();
-					$rArray['images'][$i]['height'] = $image->height();
-					$i++;
-				}
-			}
 			
-			/* Categories */
-			$categories = $categoriesManager->getList();
-			if(!empty($categories)){
+			/* Build JSON Array */
+			$rArray['storage'] = $count;
+			$rArray['storage'] = $count_albums;
+			if(!empty($albums)){
 				$i = 0;
-				foreach($categories as $categorie){
-					$rArray['categories'][$i]['id'] = $categorie->id();
-					$rArray['categories'][$i]['name'] = $categorie->name();
+				foreach($albums as $album){
+					$rArray['albums'][$i]['id'] = $album->id();
+					$rArray['albums'][$i]['name'] = $album->name();
+					$j = 0;
+					foreach($images as $image){
+						if($image->albumid() == $album->id()){
+							$rArray['albums'][$i]['images'][$j]['id'] = $image->id();
+							$rArray['albums'][$i]['images'][$j]['timestamp'] = $image->timestamp();
+							$rArray['albums'][$i]['images'][$j]['title'] = $image->title();
+							$rArray['albums'][$i]['images'][$j]['orientation'] = $image->orientation();
+							$rArray['albums'][$i]['images'][$j]['dateadd'] = $image->dateadd();
+							$rArray['albums'][$i]['images'][$j]['userid'] = $image->userid();
+							$rArray['albums'][$i]['images'][$j]['width'] = $image->width();
+							$rArray['albums'][$i]['images'][$j]['height'] = $image->height();
+							$j++;
+						}
+					}
 					$i++;
 				}
 			}
@@ -88,22 +90,22 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 			/* Define in Array what to do */
 			$rArray['template'] = "upload";
 			$rArray['help'] = "<p>Via ce formulaire, tu peux envoyer une image sur T4Zone Images.<br/>Les formats d'images acceptés sont les suivants: JPEG, PNG et GIF.</p><p>L'image sera automatiquement redimensionnée en 800x600 (ou 600x800), un Watermark (Tatouage Numérique) sera ajouté à l'image et enfin un lien sera automatiquement généré pour pouvoir la poster sur le forum.<br/>Si l'image est mal orientée, il te sera possible une fois envoyée, de la faire tourner pour la mettre dans le bon sens!</p><p><em>S'il devait y avoir un problème lors de l'envoi, merci de contacter les admins du Forum T4Zone <a href='mailto:admin@t4zone.org?subject=Erreur Upload T4Zone Images'>admins@t4zone.org</a></em></p>";
-			/* Get Categories List */
-			$categories = $categoriesManager->getList();
-			if(!empty($categories)){
+			/* Get Albums List */
+			$albums = $albumsManager->getList();
+			if(!empty($albums)){
 				$i = 0;
-				foreach($categories as $categorie){
-					$rArray['categories'][$i]['id'] = $categorie->id();
-					$rArray['categories'][$i]['name'] = $categorie->name();
+				foreach($albums as $album){
+					$rArray['albums'][$i]['id'] = $album->id();
+					$rArray['albums'][$i]['name'] = $album->name();
 					$i++;
 				}
 			}
-			$categories = $categoriesManager->getList();
-			if(!empty($categories)){
+			$albums = $albumsManager->getList();
+			if(!empty($albums)){
 				$i = 0;
-				foreach($categories as $categorie){
-					$rArray['categories'][$i]['id'] = $categorie->id();
-					$rArray['categories'][$i]['name'] = $categorie->name();
+				foreach($albums as $album){
+					$rArray['albums'][$i]['id'] = $album->id();
+					$rArray['albums'][$i]['name'] = $album->name();
 					$i++;
 				}
 			}
@@ -128,7 +130,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 					$rArray['images'][$i]['timestamp'] = $image->timestamp();
 					$rArray['images'][$i]['title'] = $image->title();
 					$rArray['images'][$i]['orientation'] = $image->orientation();
-					$rArray['images'][$i]['categorie'] = $image->categorieid();
+					$rArray['images'][$i]['album'] = $image->albumid();
 					$rArray['images'][$i]['dateadd'] = $image->dateadd();
 					$rArray['images'][$i]['userid'] = $image->userid();
 					$rArray['images'][$i]['width'] = $image->width();
@@ -148,20 +150,20 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 				$rArray['image']['timestamp'] = $image->timestamp();
 				$rArray['image']['title'] = $image->title();
 				$rArray['image']['orientation'] = $image->orientation();
-				$rArray['image']['categorie'] = $image->categorie();
-				$rArray['image']['categorieid'] = $image->categorieid();
+				$rArray['image']['album'] = $image->album();
+				$rArray['image']['albumid'] = $image->albumid();
 				$rArray['image']['dateadd'] = $image->dateadd();
 				$rArray['image']['userid'] = $image->userid();
 				$rArray['image']['width'] = $image->width();
 				$rArray['image']['height'] = $image->height();
 			}
-			/* Get Categories List */
-			$categories = $categoriesManager->getList();
-			if(!empty($categories)){
+			/* Get Albums List */
+			$albums = $albumsManager->getList();
+			if(!empty($albums)){
 				$i = 0;
-				foreach($categories as $categorie){
-					$rArray['categories'][$i]['id'] = $categorie->id();
-					$rArray['categories'][$i]['name'] = $categorie->name();
+				foreach($albums as $album){
+					$rArray['albums'][$i]['id'] = $album->id();
+					$rArray['albums'][$i]['name'] = $album->name();
 					$i++;
 				}
 			}
@@ -195,8 +197,8 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 				$image = $imagesManager->get($_POST['imgid']);
 			}
 			switch($_POST['what']){
-				case "imagecategorie":
-					$image->setCategorieid($_POST['val']);
+				case "imagealbum":
+					$image->setAlbumid($_POST['val']);
 				break;
 			
 				case "imagetitle":
@@ -215,7 +217,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 			$image = new Image(array(
 				'timestamp' => $_POST['timestamp'],
 				'orientation' => $_POST['orientation'],
-				'categorieid' => $_POST['categorieid'],
+				'albumid' => $_POST['albumid'],
 				'userid' => $_SESSION['user_id'],
 				'title' => $_POST['title'],
 				'dateadd' => $now,

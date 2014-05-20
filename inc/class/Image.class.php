@@ -8,8 +8,8 @@ class Image {
 	private $_userid;
 	private $_title = "";
 	private $_timestamp;
-	private $_categorieid;
-	private $_categorie;
+	private $_albumid;
+	private $_album;
 	private $_orientation;
 	private $_dateadd;
 	private $_width;
@@ -40,8 +40,8 @@ class Image {
 	public function userid(){ return $this->_userid; }
 	public function timestamp(){ return $this->_timestamp; }
 	public function title(){ return $this->_title; }
-	public function categorieid(){ return $this->_categorieid; }
-	public function categorie(){ return $this->_categorie; }
+	public function albumid(){ return $this->_albumid; }
+	public function album(){ return $this->_album; }
 	public function orientation(){ return $this->_orientation; }
 	public function dateadd(){ return $this->_dateadd; }
 	public function width(){ return $this->_width; }
@@ -70,15 +70,15 @@ class Image {
 			$this->_userid = $val;
 		}
 	}
-	public function setCategorieid($val){
+	public function setAlbumid($val){
 		$val = (int) $val;
 		if(is_int($val)){
-			$this->_categorieid = $val;
+			$this->_albumid = $val;
 		}
 	}
-	public function setCategorie($val){
+	public function setAlbum($val){
 		if(is_string($val)){
-			$this->_categorie = $val;
+			$this->_album = $val;
 		}
 	}
 	public function setOrientation($val){

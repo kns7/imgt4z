@@ -35,10 +35,12 @@ class UsersManager {
 		$q = $this->_db->prepare("SELECT id FROM users WHERE name = :name AND password = :password");
 		$q->bindValue(':name',$user);
 		$q->bindValue(':password',md5($password));
-		if(!($q->execute())){
+		$q->execute();
+		$result = $q->fetch(PDO::FETCH_ASSOC);
+		if(empty($result)){
 			return "error";
 		}else{
-			return new User($q->fetch(PDO::FETCH_ASSOC));
+			return new User($result);
 		}
 	}
 	

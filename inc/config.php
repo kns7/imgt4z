@@ -4,16 +4,21 @@
  */
 
 /* DB Config */
-$PARAM_host='localhost'; // le chemin vers le serveur
-$PARAM_port='3306';
-$PARAM_db_img='kns7_img'; // le nom de votre base de données "IMGT4Z"
-$PARAM_db_forum='t4z_forum'; // le nom de votre base de données Forum
-$PARAM_user='imguser'; // nom d'utilisateur pour se connecter
-$PARAM_pwd='1h687C71i3kpA6O4'; // mot de passe de l'utilisateur pour se connecter
+$PARAM_host		= 'localhost'; // le chemin vers le serveur
+$PARAM_port		= '3306';
+$PARAM_db_img	= 'kns7_img'; // le nom de votre base de données "IMGT4Z"
+$PARAM_db_forum	= 't4z_forum'; // le nom de votre base de données Forum
+$PARAM_user		= 'imguser'; // nom d'utilisateur pour se connecter
+$PARAM_pwd		= '1h687C71i3kpA6O4'; // mot de passe de l'utilisateur pour se connecter
 
 /* Auth Config */
-$auth_type = 'local';
-//$auth_type = 'phpbb';
+$auth_type		= 'local';
+//$auth_type	= 'phpbb';
+
+/* Design */
+$style_url		= "css/kns7.css";
+$title_tool		= "KNS7 Images";
+
 
 try {
 	$conn_img = new PDO('mysql:host='.$PARAM_host.';port='.$PARAM_port.';dbname='.$PARAM_db_img, $PARAM_user, $PARAM_pwd);

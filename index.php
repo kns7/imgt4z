@@ -4,11 +4,11 @@ session_start();
 include('inc/config.php');
 /* Include Classes */
 include('inc/class/UsersManager.class.php');
-include('inc/class/CategoriesManager.class.php');
+include('inc/class/AlbumsManager.class.php');
 include('inc/class/ImagesManager.class.php');
 include('inc/class/User.class.php');
 include('inc/class/Image.class.php');
-include('inc/class/Categorie.class.php');
+include('inc/class/Album.class.php');
 $usersManager = new UsersManager($conn_img);
 /* Check if User is logged */
 if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){ 
@@ -32,7 +32,9 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 		<link rel="shortcut icon" href="favicon.ico"/>
 		<link rel="icon" href="favicon.ico"/>
 		<link rel="stylesheet" type="text/css" href="css/style.css" media="screen"/>
-		<title>KNS7 Images</title>
+		<link rel="stylesheet" type="text/css" href="<?php echo $style_url;?>" media="screen"/>
+		<link rel="stylesheet" type="text/css" href="css/smartphones.css" media="screen"/>
+		<title><?php echo $title_tool;?></title>
 	</head>
 	<body>
 		<div id="showmenu"></div>
@@ -41,7 +43,7 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 				<li class='menu' rel='back'>CACHER MENU</li>
 				<li class='menu active' rel='home'>ACCUEIL</li>
 				<li class='menu' rel='upload'>UPLOADER</li>
-				<li class='menu' rel='images'>MES IMAGES</li>
+				<li class='menu' rel='albums'>MES IMAGES</li>
 				<li class='menu' rel='logout'>DECONNEXION</li>
 			</ul>
 		</nav>
