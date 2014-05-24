@@ -76,10 +76,10 @@ $(document).ready(function(){
 		var titleobj = this;
 		var formid = $(this).attr('rel');
 		if($(".form-bloc[rel="+formid+"]").is(":visible")){
-			$(".form-bloc[rel="+formid+"]").slideUp('200',function(){ $(titleobj).css({"border-bottom": "1px solid"});});
+			$(".form-bloc[rel="+formid+"]").slideUp('200',function(){ $(titleobj).css({"border-bottom": "1px solid","border-bottom-left-radius": "5px","border-bottom-right-radius": "5px"});});
 		}else{
-			$(this).css({"border-bottom": "0px solid"});
-			$(".form-bloc").slideUp('200');
+			$(this).css({"border-bottom": "0px solid","border-bottom-left-radius": "0px","border-bottom-right-radius": "0px"});
+			$(".form-bloc:visible").slideUp('200',function(){$(this).css({"border-bottom": "1px solid","border-bottom-left-radius": "5px","border-bottom-right-radius": "5px"});});
 			$(".form-bloc[rel="+formid+"]").slideDown('200');
 		}
 	})
@@ -114,14 +114,15 @@ $(document).ready(function(){
 	.on("click",".btn",function(){
 		if(!($(this).hasClass('disable'))){
 			var what = $(this).attr('rel');
-			console.log("Clicked on a Button: ["+what+"]");
+			var rev = $(this).attr('rev');
+			console.log("Clicked on a Button: {"+what+":"+rev+"}");
 			if(!$(this).hasClass("noload")){ $(".loader").show(); }
 			if($(this).hasClass("withoverlay")){ $(".overlay").show(); }
 			/* On test si le bouton a l'attribut rev qui contient l'ID de l'image, sinon on prend le input caché #imageid */
-			if(typeof($(this).attr('rev')) != "undefined"){ var imgid = $(this).attr('rev'); }else{ var imgid = $("#imageid").val(); }
+			if(typeof(rev != "undefined")){ var imgid = rev; }else{ var imgid = $("#imageid").val(); }
 			switch(what){
 				case "add":
-					switch($(this).attr('rev')){
+					switch(rev){
 						case "album":
 							console.log("  => Add an Album");
 							buildTemplate('addalbum');
@@ -172,10 +173,10 @@ $(document).ready(function(){
 					if(confirm("Veux-tu définitivement supprimer cette image?")){
 						console.log("  => Deleting image");
 						$.post(rpcfile,{ action: 'btn', what: what, imgid: imgid },function(data){
-							reloadJson();
+							
 							d = JSON.parse(data);
 							if(d.result == 1){
-								buildTemplate('images');
+								reloadJson('images');
 							}
 						});
 					}else{
@@ -185,7 +186,7 @@ $(document).ready(function(){
 				
 				case "editalbum":
 					/* Edition d'un album */
-					current.album = $(this).attr('rev');
+					current.album = rev;
 					console.log("  => Editing album (ID: "+current.album+")");
 					buildTemplate('editalbum');
 					return false;
@@ -196,10 +197,14 @@ $(document).ready(function(){
 					if(confirm("Veux-tu définitivement supprimer cet album ?")){
 						var albumid = $("#albumid").val();
 						console.log("  => Deleting album ID "+albumid);
-						if(confirm("Veux-tu aussi supprimer les photos qu'il contient ? ")){
-							var deleteimages = true;
+						if(album.hasOwnProperty('images')){
+							if(confirm("Veux-tu aussi supprimer les photos qu'il contient ? ")){
+								var deleteimages = 1;
+							}else{
+								var deleteimages = 0;
+							}
 						}else{
-							var deleteimages = false;
+							var deleteimages = 2;
 						}
 						$.post(rpcfile,{ action: 'btn', what: what, albumid: albumid, deleteimages: deleteimages },function(data){
 							d = JSON.parse(data);
@@ -263,7 +268,7 @@ $(document).ready(function(){
 				break;
 				
 				case "save":
-					switch($(this).attr('rev')){
+					switch(rev){
 						case "album":
 							/* Sauvegarder un Formulaire */
 							$.post(rpcfile,{
@@ -273,7 +278,6 @@ $(document).ready(function(){
 								albumid: $("#albumid").val()
 							},function(data){
 								reloadJson("albums");
-								//buildTemplate("albums");
 								$(".overlay").hide();
 							});
 						break;
@@ -312,6 +316,10 @@ $(document).ready(function(){
 						break;
 					}
 				break;
+				
+				case "cancel":
+					buildTemplate(rev);
+				break;
 			}
 		}
 	})
@@ -329,6 +337,7 @@ function buildTemplate(template){
 	var d = jsonarray;
 	$("#global").removeClass().hide().html("").addClass(template);
 	switch(template){
+		default:
 		case "albums":
 			current.image = 0;
 			current.album = 0;
@@ -513,7 +522,7 @@ function buildTemplate(template){
 					for(var i = 0; i < d.albums.length; i++){
 						if(d.albums[i].id == album.id){
 							var option = $("<option>",{ value: d.albums[i].id, text: d.albums[i].name, selected: 'selected' });
-						}else{ 
+						}else{
 							var option = $("<option>",{ value: d.albums[i].id, text: d.albums[i].name });
 						}
 						select.append(option);
@@ -530,12 +539,14 @@ function buildTemplate(template){
 					$("table").append("<tr><th>Album</th></tr><tr><td id='selection'></td></tr>");
 					$("#selection").append(select);
 					$("table").append("<tr><th>Titre</th></tr><tr><td><input type='text' id='imagetitle' value='"+title+"'/></td></tr>");
-					$("table").append("<tr><th>Lien pour le Forum</th></tr><tr><td><textarea readonly>[img]http://img.t4zone.org/i.php?i="+image.timestamp+"d"+image.userid+"[/img]</textarea></td></tr>");
+					$("table").append("<tr><th>Lien pour le Forum</th></tr><tr><td><textarea readonly>[img]http://img.kns7.org/i.php?i="+image.timestamp+"d"+image.userid+"[/img]</textarea></td></tr>");
+					$("table").append("<tr><th>Lien direct</th></tr><tr><td><textarea readonly>http://img.kns7.org/i.php?i="+image.timestamp+"d"+image.userid+"</textarea></td></tr>");
 				}else{
 					$("table").append("<tr><th>Album</th><td id='selection'></td></tr>");
 					$("#selection").append(select);
 					$("table").append("<tr><th>Titre</th><td><input type='text' id='imagetitle' value='"+title+"'/></td></tr>");
 					$("table").append("<tr><th>Lien pour le Forum</th><td><textarea readonly>[img]http://img.kns7.org/i.php?i="+image.timestamp+"d"+image.userid+"[/img]</textarea></td></tr>");
+					$("table").append("<tr><th>Lien direct</th><td><textarea readonly>http://img.kns7.org/i.php?i="+image.timestamp+"d"+image.userid+"</textarea></td></tr>");
 				}
 			}
 		break;
@@ -551,7 +562,7 @@ function buildTemplate(template){
 			});
 			var btns = $("<div>",{
 				class: "upload-btns",
-				html: "<div class='btn withoverlay' rel='send'>Envoyer</div><div class='btn' rel='cancel'>Annuler</div><div class='clear'></div>"
+				html: "<div class='btn withoverlay' rel='send'>Envoyer</div><div class='btn' rel='cancel' rev='upload'>Annuler</div><div class='clear'></div>"
 			});
 			var select = $("<select>",{id: "album"});
 			if(d.albums.length > 0){
@@ -584,7 +595,7 @@ function buildTemplate(template){
 			});
 			var btns = $("<div>",{
 				class: "add-btns",
-				html: "<div class='btn withoverlay' rel='save' rev='album'>Ajouter</div><div class='btn' rel='cancel'>Annuler</div><div class='clear'></div>"
+				html: "<div class='btn withoverlay' rel='save' rev='album'>Ajouter</div><div class='btn withoverlay' rel='cancel' rev='albums'>Annuler</div><div class='clear'></div>"
 			});
 			$("#global").append(addform,btns);
 			if(smartphone){
@@ -609,7 +620,7 @@ function buildTemplate(template){
 				});
 				var btns = $("<div>",{
 					class: "add-btns",
-					html: "<div class='btn withoverlay' rel='save' rev='album'>Enregistrer</div><div class='btn' rel='cancel' rev='album'>Annuler</div><div class='btn' rel='deletealbum'>Supprimer</div><div class='clear'></div>"
+					html: "<div class='btn withoverlay' rel='save' rev='album'>Enregistrer</div><div class='btn withoverlay' rel='cancel' rev='albums'>Annuler</div><div class='btn withoverlay' rel='deletealbum'>Supprimer</div><div class='clear'></div>"
 				});
 				$("#global").append(addform,btns);
 				if(smartphone){
@@ -631,7 +642,6 @@ function buildTemplate(template){
 			});
 		break;
 		
-		default:
 		case "compte":
 			var addform = $("<div>",{
 				class: "add-form"
@@ -648,7 +658,7 @@ function buildTemplate(template){
 			});
 			var changepwd_btns = $("<div>",{
 				class: "add-btns",
-				html: "<div class='btn withoverlay' rel='save' rev='changepwd'>Enregistrer</div><div class='btn' rel='cancel' rev='changepwd'>Annuler</div><div class='clear'></div>"
+				html: "<div class='btn withoverlay' rel='save' rev='changepwd'>Enregistrer</div><div class='clear'></div>"
 			});
 			changepwd_form.append(changepwd_btns);
 			var settings_title = $("<div>",{
@@ -663,10 +673,23 @@ function buildTemplate(template){
 			});
 			var settings_btns = $("<div>",{
 				class: "add-btns",
-				html: "<div class='btn withoverlay' rel='save' rev='settings'>Enregistrer</div><div class='btn' rel='cancel' rev='settings'>Annuler</div><div class='clear'></div>"
+				html: "<div class='btn withoverlay' rel='save' rev='settings'>Enregistrer</div><div class='clear'></div>"
 			});
 			settings_form.append(settings_btns);
-			addform.append(changepwd_title, changepwd_form, settings_title, settings_form);
+			var stats_title = $("<div>",{
+				class: "bloc-title",
+				rel: "stats",
+				text: "Statistiques de mon compte"
+			});
+			var stats_form = $("<div>",{
+				class: "form-bloc",
+				rel: 'stats',
+				html: "<table rel='stats'></table>"
+			});
+			
+			addform.append(stats_title, stats_form);
+			if(d.settings.auth == "local"){ addform.append(changepwd_title, changepwd_form); }
+			addform.append(settings_title, settings_form);
 			$("#global").append(addform);
 			
 			if(smartphone){
@@ -682,13 +705,24 @@ function buildTemplate(template){
 				
 				$("table[rel='settings']").append("<tr><th>Trier les images par</th><td><select id='champ' name='champ'><option value='dateadd'>Date</option><option value='title'>Titre</option></select></td></tr>");
 				$("table[rel='settings']").append("<tr><th>Tri</th><td><select id='ordre' name='ordre'><option value='ASC'>Croissant</option><option value='DESC'>Décroissant</option></select></td></tr>");
-				$("table[rel='settings']").append("<tr><th>Nombre d'images</th><td><select id='step' name='step'><option value='10'>10</option><option value='20'>20</option><option value='50'>50</option></select></td></tr>");
+				$("table[rel='settings']").append("<tr><th>Nombre d'images</th><td><select id='step' name='step'><option value='10'>10</option><option value='20'>20</option><option value='50'>50</option></select></td></tr>");				
 			}
-			
+			if(d.storage.albums > 1){ var nbalbums = " albums" }else{ var nbalbums = " album" }
+			if(d.storage.images > 1){ var nbimg = " images" }else{ var nbimg = " image" }
+			$("table[rel='stats']").append("<tr><th>"+d.storage.albums+nbalbums+"</th></tr>");
+			$("table[rel='stats']").append("<tr><th>"+d.storage.images+nbimg+"</th></tr>");
+			if(d.storage.quota == 0){
+				$("table[rel='stats']").append("<tr><th>Utilisé "+byteConversion(d.storage.size,"M")+" Mo</th></tr>");
+			}else{
+				var percent = Math.floor((d.storage.size * 100) / (d.storage.quota * 1024 * 1024));
+				$("table[rel='stats']").append("<tr><th>Utilisé "+byteConversion(d.storage.size,"M")+" / "+d.storage.quota+" Mo disponible</th></tr>");
+				$("table[rel='stats']").append("<tr><th><div class='placebar'><div class='progress' style='width: "+percent+"%;'></div><span>"+percent+"%</span></div></th></tr>");
+			}
 		break;
 	}
 	$(".loader").fadeOut({complete:function(){
 		$("#global").show();
+		$(".overlay").hide();
 		resizeBlocs();
 	}});
 }
@@ -712,6 +746,19 @@ function reloadJson(template){
 			buildTemplate(template);
 		}
 	});
+}
+
+function byteConversion(bt,scale){
+	if(scale === undefined){ scale = "M" }
+	switch(scale){
+		case "K":
+			return Math.floor(bt/1024);
+		break;
+		
+		case "M":
+			return Math.floor(bt/1024/1024);
+		break;
+	}
 }
 
 function resizeBlocs(){

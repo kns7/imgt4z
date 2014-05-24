@@ -73,9 +73,9 @@ nav ul .menu:hover,nav ul li.active { background-color: #010101; }
 	background: #555555;
 }
 .bloc-title {
-	background: #888888;
+	background-color: #888888;
 	color: white;
-	border-bottom-color: white;
+	border-color: white;
 }
 .form-bloc {
 	background: #888888;

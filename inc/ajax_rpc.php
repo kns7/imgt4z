@@ -28,11 +28,12 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 			$count_albums = $albumsManager->count($_SESSION['user_id']);
 			/* Images */
 			$images = $imagesManager->getList($_SESSION['user_id']);
-			$count = $imagesManager->count($_SESSION['user_id']);
+			$count_images = $imagesManager->count($_SESSION['user_id']);
 			
 			/* Build JSON Array */
-			$rArray['storage'] = $count;
-			$rArray['storage'] = $count_albums;
+			$rArray['storage']['images'] = $count_images;
+			$rArray['storage']['albums'] = $count_albums;
+			$rArray['settings']['auth'] = $auth_type;
 			if(!empty($albums)){
 				$i = 0;
 				foreach($albums as $album){
@@ -195,7 +196,25 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 				break;
 			
 				case "deletealbum":
-					$rArray['result'] = $albumsManager->delete($album, $_POST['deleteimages']);
+					if($albumsManager->delete($album) == 1){
+						switch($_POST['deleteimages']){
+							case "2":
+								$rArray['result'] = 1;
+							break;
+						
+							case "1":
+								$imagesManager->deleteFromAlbum($album->id());
+								$rArray['result'] = 1;
+							break;
+						
+							case "0":
+								$imagesManager->moveFromAlbum($album->id());
+								$rArray['result'] = 1;
+							break;
+						}
+					}else{
+						$rArray['result'] = 0;
+					}
 				break;
 			}
 		break;

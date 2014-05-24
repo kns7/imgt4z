@@ -120,7 +120,7 @@ a {
 	height: 15px;
 }
 .overlay {
-	position: absolute;
+	position: fixed;
 	top: 0px;
 	left: 0px;
 	width: 100%;
@@ -241,15 +241,18 @@ nav ul .menu:hover,nav ul li.active { background-color: #010101; }
 	margin-top: 10px;
 	background: #555555;
 	padding: 10px;
+	padding-bottom: 25px;
 	border-radius: 5px;
 }
 .bloc-title {
 	border: 1px solid;
-	padding: 5px;
-	border-radius: 5px 5px 0px 0px;
-	margin-top: 5px;
+	padding: 10px 5px 10px 34px;
+	border-radius: 5px;
+	margin-top: 15px;
 	font-weight: bold;
 	cursor: pointer;
+	background-position: 5px 4px;
+	background-repeat: no-repeat;
 }
 .form-bloc {
 	display: none;
@@ -301,6 +304,27 @@ table td input[type=text]:focus, table td textarea:focus, table td select:focus 
 }
 table td input[type=file]{
 	padding-top: 4px;
+}
+.placebar{
+	position: relative;
+	height: 20px;
+	line-height: 20px;
+	border: 1px solid;
+	border-radius: 4px;
+	text-align: center;
+	margin: 5px 10px 10px 10px;
+}
+.placebar .progress{
+	height: 20px;
+	border-radius: 4px;
+	padding: 0px;
+	margin: 0px;
+	border-right: 1px solid;
+	background-color: #43C343;
+}
+.placebar span {
+	position: absolute;
+	top: 0px;
 }
 
 /* Section Mes Albums */
@@ -501,3 +525,6 @@ table td input[type=file]{
 .btn[rel='delete']:hover { background-color: #DD7A73; }
 .btn.active { background-color: #FFD387; }
 .btn.disable { background-color: #917E5F; cursor: normal; opacity: 0.5;}
+.bloc-title[rel='changepwd']{ background-image: url('../img/key_24.png');}
+.bloc-title[rel='settings']{ background-image: url('../img/edit_24.png');}
+.bloc-title[rel='stats']{ background-image: url('../img/stats_24.png');}

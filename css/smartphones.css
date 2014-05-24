@@ -23,6 +23,7 @@ Standard Smartphones, Reglages globaux
 	table td textarea { width: 100%; font-size: 8px;}
 	.img-edit { padding-top: 55px; }
 	.img-actions { top: 5px; }
+	.noresults{ width: auto; }
 }
 /* 
 Petits Smartphones (Largeur 240px) 
@@ -42,7 +43,7 @@ Petits Smartphones (Largeur 240px)
 		padding: 5px;
 	}
 	.help { width: 133px; }
-	.upload-form {width: 165px; }
+	.upload-form, .add-form {width: 165px; }
 	.btn[rel='prev']{ margin-right: 35px; }
 	.btn[rel='cancel'],.btn[rel='send']{ margin-right: 30px; }
 	table th { text-align: center; }
@@ -80,8 +81,8 @@ Smartphones (Largeur 320px)
 	#global.images{ padding-left: 40px; }
 	.img-menu{ left: 20px; }
 	.help { width: 213px; }
-	.upload-form, .upload-btns {width: 245px; }
-	.btn[rel='cancel']{ margin-right: 30px; }
+	.upload-form, .add-form, .upload-btns {width: 245px; }
+	.btn[rel='cancel']{ /*margin-right: 30px;*/ }
 	table th { text-align: center; }
 	table td input{ width: 228px; }
 	table td select { width: 186px; }
@@ -116,7 +117,7 @@ Smartphones (Largeur 360px)
 	#global.images { padding-left: 50px; }
 	.img-menu { left: 35px; }
 	.help{ width: 257px; }
-	.upload-form, .upload-btns {width: 290px; }
+	.upload-form, .add-form, .upload-btns {width: 290px; }
 	.btn[rel='cancel']{ margin-right: 75px; }
 	table th { text-align: center; }
 	table td select { width: 228px; }
@@ -153,7 +154,7 @@ Smartphones (Largeur 384px)
 	#global.images { padding-left: 65px; }
 	.img-menu { left: 45px; }
 	.help{ width: 277px; }
-	.upload-form, .upload-btns {width: 310px; }
+	.upload-form, .add-form, .upload-btns {width: 310px; }
 	.btn[rel='cancel']{ margin-right: 75px; }
 	table th { text-align: center; }
 	table td select { width: 248px; }
@@ -187,7 +188,7 @@ Smartphones (Largeur 400px)
 	#global.images { padding-left: 65px; }
 	.img-menu { left: 45px; }
 	.help{ width: 257px; }
-	.upload-form, .upload-btns {width: 290px; }
+	.upload-form, .add-form, .upload-btns {width: 290px; }
 	.btn[rel='cancel']{ margin-right: 75px; }
 	table th { text-align: center; }
 	table td select { width: 228px; }
@@ -222,7 +223,7 @@ Mini Tablettes (Largeur 480px)
 	.images .img-bloc{ margin: 4px; }
 	.img-menu { left: 10px; width: 425px }
 	.help{ width: 387px; }
-	.upload-form, .upload-btns {width: 420px; }
+	.upload-form, .add-form, .upload-btns {width: 420px; }
 	.btn[rel='cancel']{ margin-right: 205px; }
 	.btn[rel='prev']{ margin-right: 5px; }
 	table th { text-align: center; }

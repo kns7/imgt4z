@@ -39,21 +39,32 @@ class ImagesManager{
 		$q = $this->_db->prepare("SELECT images.id as id, timestamp, orientation, albumid, albums.name as album, userid, title, dateadd, width, height FROM images Inner Join albums ON images.albumid = albums.id WHERE albumid = :albumid ORDER BY dateadd DESC");
 		$q->bindValue(':albumid',$userid);
 		$q->execute();
-		
+		$return = 1;
 		while($datas = $q->fetch(PDO::FETCH_ASSOC)){
 			$images[] = new Image($datas);
 		}
 		foreach($images as $img){
-			$this->delete($img);
+			if($this->delete($img) == 0){
+				$return = 0;
+			}
 		}
+		return $return;
+	}
+	
+	public function moveFromAlbum($albumid){
+		$q = $this->_db->prepare("UPDATE images SET albumid = '1' WHERE albumid = :albumid");
+		$q->bindValue(':albumid', $albumid, PDO::PARAM_INT);
+		
+		return $q->execute();
 	}
 	
 	public function count($userid){
-		$q = $this->_db->prepare("SELECT COUNT(id) as elements FROM images WHERE userid = :userid");
+		$q = $this->_db->prepare("SELECT COUNT(id) as images FROM images WHERE userid = :userid");
 		$q->bindValue(':userid',$userid);
 		$q->execute();
+		$result = $q->fetch(PDO::FETCH_ASSOC);
 		
-		return $q->fetch(PDO::FETCH_ASSOC);
+		return $result['images'];
 	}
 	
 	public function get($id){

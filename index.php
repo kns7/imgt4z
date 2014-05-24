@@ -31,6 +31,13 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 		<meta name="Slurp" content="noimageindex">
 		<link rel="shortcut icon" href="favicon.ico"/>
 		<link rel="icon" href="favicon.ico"/>
+		<link rel="icon" href="favicon_32.png" sizes="32x32">
+		<link rel="icon" href="favicon_48.png" sizes="48x48">
+		<link rel="icon" href="favicon_64.png" sizes="64x64">
+		<link rel="icon" href="favicon_72.png" sizes="72x72">
+		<link rel="icon" href="favicon.png" sizes="128x128">
+		<link rel="apple-touch-icon" href="favicon_48.png" />
+		<link rel="shortcut icon" href="favicon.ico">
 		<link rel="stylesheet" type="text/css" href="css/style.css" media="screen"/>
 		<link rel="stylesheet" type="text/css" href="<?php echo $style_url;?>" media="screen"/>
 		<link rel="stylesheet" type="text/css" href="css/smartphones.css" media="screen"/>
