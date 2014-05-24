@@ -42,7 +42,7 @@ nav ul .menu {
 nav ul .menu[rel=back]{ background-image: url('../img/menu_back.png'); display: none; }
 nav ul .menu[rel=upload]{ background-image: url('../img/menu_upload.png'); }
 nav ul .menu[rel=images]{ background-image: url('../img/menu_images.png'); }
-nav ul .menu[rel=home]{ background-image: url('../img/menu_home.png'); }
+nav ul .menu[rel=compte]{ background-image: url('../img/menu_compte.png'); }
 nav ul .menu[rel=logout]{ background-image: url('../img/menu_logout.png'); }
 nav ul .menu:hover,nav ul li.active { background-color: #010101; }
 

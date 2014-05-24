@@ -25,7 +25,7 @@ $(window).on("resize",function(){ resizeBlocs(); });
 
 $(document).ready(function(){
 	resizeBlocs();
-	reloadJson();
+	reloadJson("albums");
 	
 	/* Actions du menu principal */
 	$(document).on("click",".menu",function(){
@@ -51,11 +51,6 @@ $(document).ready(function(){
 		$(".loader").show();
 		var albid = $(this).attr('id').split("_");
 		current.album = albid[1];
-		for(var i = 0; i < jsonarray.albums.length; i++){
-			if(jsonarray.albums[i]['id'] == current.album){
-				album = jsonarray.albums[i];
-			}
-		}
 		var action = 'images';
 		console.log("Album block Click => View Album ID: "+current.album);
 		$("#global").removeClass().hide().html("");
@@ -67,11 +62,6 @@ $(document).ready(function(){
 		$(".loader").show();
 		var imgid = $(this).attr('id').split("_");
 		current.image = imgid[1];
-		for(i=0;i< album.images.length;i++){
-			if(album.images[i].id == current.image){ 
-				image = album.images[i];
-			}
-		}
 		var action = 'image';
 		console.log("Image block Click => View Image ID: "+current.image);
 		$("#global").removeClass().hide().html("");
@@ -81,26 +71,40 @@ $(document).ready(function(){
 	/* Selectionner le texte en cliquant sur le Textarea */
 	.on("click","textarea",function(){ if(!smartphone){ this.select();} })
 	
+	/* Afficher / Cacher le formulaire en cliquant sur le titre */
+	.on("click",".bloc-title",function(){
+		var titleobj = this;
+		var formid = $(this).attr('rel');
+		if($(".form-bloc[rel="+formid+"]").is(":visible")){
+			$(".form-bloc[rel="+formid+"]").slideUp('200',function(){ $(titleobj).css({"border-bottom": "1px solid"});});
+		}else{
+			$(this).css({"border-bottom": "0px solid"});
+			$(".form-bloc").slideUp('200');
+			$(".form-bloc[rel="+formid+"]").slideDown('200');
+		}
+	})
+	
 	/* Sauvegarder les changements de album et titre */
 	.on("change","#imagealbum,#imagetitle",function(){
 		var imgid = $("#imageid").val();
-		var what = $(this).attr('id');
+		var field = $(this).attr('id');
 		var val = $(this).val();
 		$(".loader").show();
-		console.log('Save Images Property Changes: '+what+', Image ID: '+ imgid);
+		console.log('Save Images Property Changes: '+field+', Image ID: '+ imgid);
 		$.post(rpcfile,{
 			action: 'save',
-			what: what,
+			what: 'image',
+			field: field,
 			imgid: imgid,
 			val: val
 		},function(data){
 			reloadJson();
 			var d = JSON.parse(data);
 			if(d.result == 1){
-				if(what == "imagealbum"){ $(".album-icon").css({'background-image': "url('../img/albums/32/cat_"+val+".png')"}); }
-				$("#"+what).css({'background-image': 'url("../img/valid.png")', 'border-color': "#00FF00"});
+				if(field == "imagealbum"){ current.album = val; }
+				$("#"+field).css({'background-image': 'url("../img/valid.png")', 'border-color': "#00FF00"});
 			}else{
-				$("#"+what).css({'background-image': 'url("../img/error.png")', 'border-color': "#FF0000"});
+				$("#"+field).css({'background-image': 'url("../img/error.png")', 'border-color': "#FF0000"});
 			}
 			$(".loader").fadeOut();
 		});
@@ -116,6 +120,15 @@ $(document).ready(function(){
 			/* On test si le bouton a l'attribut rev qui contient l'ID de l'image, sinon on prend le input caché #imageid */
 			if(typeof($(this).attr('rev')) != "undefined"){ var imgid = $(this).attr('rev'); }else{ var imgid = $("#imageid").val(); }
 			switch(what){
+				case "add":
+					switch($(this).attr('rev')){
+						case "album":
+							console.log("  => Add an Album");
+							buildTemplate('addalbum');
+						break;
+					}
+				break;
+				
 				case "resize":
 					/* Redimensionnement de l'image */
 					console.log("  => Resizing image preview");
@@ -131,8 +144,13 @@ $(document).ready(function(){
 				
 				case "backto":
 					/* Retour à l'album */
-					console.log("  => Back to Album (ID:"+current.album);
-					buildTemplate('images');
+					if(current.image != 0){
+						console.log("  => Back to Album (ID:"+current.album+")");
+						buildTemplate('images');
+					}else{
+						console.log("  => Back to Album List");
+						buildTemplate('albums');
+					}
 				break;
 
 				case "rotatel":
@@ -165,18 +183,34 @@ $(document).ready(function(){
 					}
 				break;
 				
+				case "editalbum":
+					/* Edition d'un album */
+					current.album = $(this).attr('rev');
+					console.log("  => Editing album (ID: "+current.album+")");
+					buildTemplate('editalbum');
+					return false;
+				break;
+				
 				case "deletealbum":
 					/* Suppression de l'album (et de toutes ses images) */
-					if(confirm("Veux-tu définitivement supprimer cet album et TOUTES les images qu'il contient?")){
-						console.log("  => Deleting album");
-						$.post(rpcfile,{ action: 'btn', what: what, imgid: imgid },function(data){
-							reloadJson();
+					if(confirm("Veux-tu définitivement supprimer cet album ?")){
+						var albumid = $("#albumid").val();
+						console.log("  => Deleting album ID "+albumid);
+						if(confirm("Veux-tu aussi supprimer les photos qu'il contient ? ")){
+							var deleteimages = true;
+						}else{
+							var deleteimages = false;
+						}
+						$.post(rpcfile,{ action: 'btn', what: what, albumid: albumid, deleteimages: deleteimages },function(data){
 							d = JSON.parse(data);
 							if(d.result == 1){
-								buildTemplate('albums');
+								reloadJson('albums');
+								$(".overlay").hide();
 							}
 						});
 					}else{
+						$(".loader").fadeOut();
+						$(".overlay").hide();
 						return false;
 					}
 				break;
@@ -227,6 +261,57 @@ $(document).ready(function(){
 					});            
 					return false; 
 				break;
+				
+				case "save":
+					switch($(this).attr('rev')){
+						case "album":
+							/* Sauvegarder un Formulaire */
+							$.post(rpcfile,{
+								action: 'save', 
+								what: "album",
+								albumtitle: $("#albumtitle").val(),
+								albumid: $("#albumid").val()
+							},function(data){
+								reloadJson("albums");
+								//buildTemplate("albums");
+								$(".overlay").hide();
+							});
+						break;
+						
+						case "changepwd":
+							/* Sauvegarder le nouveau mot de passe d'un utilisateur */
+							if($("#passwd").val() == $("#passwd2").val()){
+								$.post(rpcfile,{
+									action: 'save', 
+									what: "user",
+									field: "password",
+									passwd: $("#passwd").val()
+								},function(data){
+									$(".overlay").hide();
+									$(".loader").fadeOut();
+								});
+							}else{
+								alert("Les mots de passes ne correspondent pas!");
+								return false;
+							}
+						break;
+						
+						case "settings":
+							/* Sauvegarder les préférences d'un utilisateur */
+							$.post(rpcfile,{
+								action: 'save', 
+								what: "user",
+								field: "settings",
+								ordre: $("#ordre").val(),
+								champ: $("#champ").val(),
+								step: $("#step").val()
+							},function(data){
+								reloadJson("compte");
+								$(".overlay").hide();
+							});
+						break;
+					}
+				break;
 			}
 		}
 	})
@@ -257,20 +342,37 @@ function buildTemplate(template){
 						id: 'album_'+d.albums[i].id,
 						class: 'album-bloc'
 					});
+					if(d.albums[i].hasOwnProperty('images')){
+						amountimages = d.albums[i].images.length;
+					}else{
+						amountimages = "0";
+					}
+					var amount = $("<div>",{
+						class: 'amount',
+						html: amountimages
+					});
 					var img = $("<div>",{
 						class: 'img',
 						html: "<img src='/img/album_64.png'/>"
 					});
-					var infos = $("<div>",{
-						class: 'infos',
-						html: "<div class='title'>"+d.albums[i].name+"</div><div class='btn delete' rel='deletealbum' rev='"+d.albums[i].id+"' title='Supprimer'></div>"
-					});
+					if(d.albums[i].id == '1'){
+						var infos = $("<div>",{
+							class: 'infos',
+							html: "<div class='title'>"+d.albums[i].name+"</div>"
+						});
+					}else{
+						var infos = $("<div>",{
+							class: 'infos',
+							html: "<div class='title'>"+d.albums[i].name+"</div><div class='btn edit' rel='editalbum' rev='"+d.albums[i].id+"' title='Editer'></div>"
+						});
+					}
 					$("#global").append(albumbloc);
-					$("#album_"+d.albums[i].id).append(img,infos);
+					$("#album_"+d.albums[i].id).append(amount,img,infos);
 				}
 				var clear = $("<div>",{ class: 'clear'});
+				var btnaddalbum = $("<div>",{class: "btn", rel: "add", rev: "album", title: "Ajouter un album"});
 				var imgmenu = $("<div>",{ class: 'img-menu', text: d.albums.length +' albums'});			
-				imgmenu.append(clear);
+				imgmenu.append(btnaddalbum,clear);
 				resizeBlocs();
 				$("#global").append(clear,imgmenu);
 			}
@@ -278,82 +380,109 @@ function buildTemplate(template){
 		
 		case "images":
 			current.image = 0;
-			image = "";
-			if(album.hasOwnProperty('images')){
-				pagination.end = Math.round(pagination.start + pagination.step);
-				var timestamp = Math.round(+new Date() / 1000);
-				if(pagination.end > album.images.length){
-					var limit = album.images.length;
-				}else{
-					var limit = pagination.end;
+			for(var i = 0; i < jsonarray.albums.length; i++){
+				if(jsonarray.albums[i]['id'] == current.album){
+					album = jsonarray.albums[i];
 				}
-				console.log("  => Affichage des Images depuis "+pagination.start +" jusqu'à "+ pagination.end);
-				for(var i = pagination.start; i < limit; i++){
-					/* Test if Title is filled */
-					if(album.images[i].title == ""){ var title = "Sans Titre"; }else{ var title = album.images[i].title; }
-					/* Test Image orientation */
-					if(album.images[i].orientation == "1"){
-						/* Vertical */
-						if(album.images[i].width < '150'){
-							w = album.images[i].width;
-						}else{
-							w = "150"
-						}
-					}else{
-						/* Horizontal */
-						if(album.images[i].width < '200'){
-							w = album.images[i].width;
-						}else{
-							w = "200"
-						}
-					}
-					var imgbloc = $("<div>",{
-						id: 'image_'+album.images[i].id,
-						class: 'img-bloc'
-					});
-					var img = $("<div>",{
-						class: 'img',
-						html: "<img src='/storage/"+album.images[i].userid+"/"+album.images[i].timestamp+".jpg?t="+timestamp+"' width='"+w+"'/>"
-					});
-					var infos = $("<div>",{
-						class: 'infos',
-						html: "<div class='title' rel='"+album.images[i].album+"'>"+title+"<br/><em>"+album.images[i].dateadd+"</em></div><div class='btn delete' rel='delete' rev='"+album.images[i].id+"' title='Supprimer'></div>"
-					});
-					$("#global").append(imgbloc);
-					$("#image_"+album.images[i].id).append(img,infos);
-				}
-				var clear = $("<div>",{ class: 'clear'});
-				if(album.images.length >= 1){ var txtimg = "image"; }else{ var txtimg = "images"; }
-				var imgmenu = $("<div>",{ class: 'img-menu', text: album.name +': '+album.images.length +' '+txtimg});
-				var btnfilter = $("<div>",{class: 'btn', rel: 'filter'});
-				var btnshowmenu = $("<div>",{class: 'btn-menu', rel: 'show'});
-				var btnshow = $("<div>",{class: 'btn noload', rel: 'show', amount: '0'});
-				var btnshow10 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '10'});
-				var btnshow20 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '20'});
-				var btnshow50 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '50'});
-				var imgnext = $("<div>",{class: "btn", rel: "next", html: "Suivant"});
-				var imgprev = $("<div>",{class: "btn", rel: "prev", html: "Précédent"});
-				var boxfilter = $("<div>",{class: "filter-box"});
-				btnshow.attr('amount',d.user.step);
-				btnshowmenu.append(btnshow50,btnshow20,btnshow10);
-				imgmenu.append(btnshow,btnshowmenu,imgnext,imgprev,clear);
-				resizeBlocs();
-				$("#global").append(clear,imgmenu);
-				/* Activer le bouton du nombre d'images */
-				$(".btn[amount="+pagination.step+"]").addClass('active');
-				/* Desactiver Prev ou Next en fonction */
-				if(pagination.start == 0){
-					$(".btn[rel='prev']").addClass('disable');
-				}
-				if(pagination.end >= album.images.length){
-					$(".btn[rel='next']").addClass('disable');
-				}
+			}
+			if(album.id === undefined){
+				$("#global").append("<div class='noresults'>L'album demandée n'a pas été trouvée...</div>");
 			}else{
-				$("#global").append("<div class='noresults'>Tu n'as aucune image dans cet album!</div>");
+				image = "";
+				if(album.hasOwnProperty('images')){
+					pagination.end = Math.round(pagination.start + pagination.step);
+					var timestamp = Math.round(+new Date() / 1000);
+					if(pagination.end > album.images.length){
+						var limit = album.images.length;
+					}else{
+						var limit = pagination.end;
+					}
+					console.log("  => Affichage des Images depuis "+pagination.start +" jusqu'à "+ pagination.end);
+					for(var i = pagination.start; i < limit; i++){
+						/* Test if Title is filled */
+						if(album.images[i].title == ""){ var title = "Sans Titre"; }else{ var title = album.images[i].title; }
+						/* Test Image orientation */
+						if(album.images[i].orientation == "1"){
+							/* Vertical */
+							if(album.images[i].width < '150'){
+								w = album.images[i].width;
+							}else{
+								w = "150"
+							}
+						}else{
+							/* Horizontal */
+							if(album.images[i].width < '200'){
+								w = album.images[i].width;
+							}else{
+								w = "200"
+							}
+						}
+						var imgbloc = $("<div>",{
+							id: 'image_'+album.images[i].id,
+							class: 'img-bloc'
+						});
+						var img = $("<div>",{
+							class: 'img',
+							html: "<img src='/storage/"+album.images[i].userid+"/"+album.images[i].timestamp+".jpg?t="+timestamp+"' width='"+w+"'/>"
+						});
+						var infos = $("<div>",{
+							class: 'infos',
+							html: "<div class='title' rel='"+album.images[i].album+"'>"+title+"<br/><em>"+album.images[i].dateadd+"</em></div><div class='btn delete' rel='delete' rev='"+album.images[i].id+"' title='Supprimer'></div>"
+						});
+						$("#global").append(imgbloc);
+						$("#image_"+album.images[i].id).append(img,infos);
+					}
+					var clear = $("<div>",{ class: 'clear'});
+					if(album.images.length >= 1){ var txtimg = "image"; }else{ var txtimg = "images"; }
+					var imgmenu = $("<div>",{ class: 'img-menu', text: album.name +': '+album.images.length +' '+txtimg});
+					var btnfilter = $("<div>",{class: 'btn', rel: 'filter'});
+					var btnshowmenu = $("<div>",{class: 'btn-menu', rel: 'show'});
+					var btnshow = $("<div>",{class: 'btn noload', rel: 'show', amount: '0'});
+					var btnshow10 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '10'});
+					var btnshow20 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '20'});
+					var btnshow50 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '50'});
+					var imgnext = $("<div>",{class: "btn", rel: "next", html: "Suivant"});
+					var imgprev = $("<div>",{class: "btn", rel: "prev", html: "Précédent"});
+					var btnbackto = $("<div>",{class: "btn", rel: "backto", title: "Retour aux albums"});
+					var boxfilter = $("<div>",{class: "filter-box"});
+					btnshow.attr('amount',d.user.step);
+					btnshowmenu.append(btnshow50,btnshow20,btnshow10);
+					imgmenu.append(btnshow,btnbackto,btnshowmenu,imgnext,imgprev,clear);
+					resizeBlocs();
+					$("#global").append(clear,imgmenu);
+					/* Activer le bouton du nombre d'images */
+					$(".btn[amount="+pagination.step+"]").addClass('active');
+					/* Desactiver Prev ou Next en fonction */
+					if(pagination.start == 0){
+						$(".btn[rel='prev']").addClass('disable');
+					}
+					if(pagination.end >= album.images.length){
+						$(".btn[rel='next']").addClass('disable');
+					}
+				}else{
+					var clear = $("<div>",{ class: 'clear'});
+					var imgmenu = $("<div>",{ class: 'img-menu', text: album.name +': 0 images'});
+					var btnshowmenu = $("<div>",{class: 'btn-menu', rel: 'show'});
+					var btnshow = $("<div>",{class: 'btn noload', rel: 'show', amount: '0'});
+					var btnshow10 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '10'});
+					var btnshow20 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '20'});
+					var btnshow50 = $("<div>",{class: 'btn', rel: 'changeshow', amount: '50'});
+					var btnbackto = $("<div>",{class: "btn", rel: "backto", title: "Retour aux albums"});
+					var boxfilter = $("<div>",{class: "filter-box"});
+					btnshow.attr('amount',d.user.step);
+					btnshowmenu.append(btnshow50,btnshow20,btnshow10);
+					imgmenu.append(btnshow,btnbackto,btnshowmenu,imgnext,imgprev,clear);
+					$("#global").append("<div class='noresults'>Tu n'as aucune image dans cet album!</div>").append(clear,imgmenu);
+				}
 			}
 		break;
 		
 		case "image":
+			for(i=0;i< album.images.length;i++){
+				if(album.images[i].id == current.image){ 
+					image = album.images[i];
+				}
+			}
 			if(image.id === undefined){
 				$("#global").append("<div class='noresults'>L'image demandée n'a pas été trouvée...</div>");
 			}else{
@@ -382,7 +511,7 @@ function buildTemplate(template){
 				var select = $("<select>",{id: "imagealbum"});
 				if(d.albums.length > 0){
 					for(var i = 0; i < d.albums.length; i++){
-						if(d.albums[i].id == image.album){
+						if(d.albums[i].id == album.id){
 							var option = $("<option>",{ value: d.albums[i].id, text: d.albums[i].name, selected: 'selected' });
 						}else{ 
 							var option = $("<option>",{ value: d.albums[i].id, text: d.albums[i].name });
@@ -406,7 +535,7 @@ function buildTemplate(template){
 					$("table").append("<tr><th>Album</th><td id='selection'></td></tr>");
 					$("#selection").append(select);
 					$("table").append("<tr><th>Titre</th><td><input type='text' id='imagetitle' value='"+title+"'/></td></tr>");
-					$("table").append("<tr><th>Lien pour le Forum</th><td><textarea readonly>[img]http://img.t4zone.org/i.php?i="+image.timestamp+"d"+image.userid+"[/img]</textarea></td></tr>");
+					$("table").append("<tr><th>Lien pour le Forum</th><td><textarea readonly>[img]http://img.kns7.org/i.php?i="+image.timestamp+"d"+image.userid+"[/img]</textarea></td></tr>");
 				}
 			}
 		break;
@@ -442,10 +571,53 @@ function buildTemplate(template){
 				$("table").append("<tr><th>Album</th></tr><tr><td id='selection'><div class='album-icon'></div></td></tr>");
 			}else{
 				$("table").append("<tr><th>Fichier image</th><td><input type='file' id='file' name='file'/></td></tr>");
-				$("table").append("<tr><th>Titre</th><td><input type='text' id='title' name='file' value=''/></td></tr>");
+				$("table").append("<tr><th>Titre</th><td><input type='text' id='title' name='title' value=''/></td></tr>");
 				$("table").append("<tr><th>Album</th><td id='selection'><div class='album-icon'></div></td></tr>");
 			}
 			$("#selection").append(select);
+		break;
+		
+		case "addalbum":
+			var addform = $("<div>",{
+				class: "add-form",
+				html: "<form id='add_form'><input type='hidden' id='action' value='addalbum'/><table></table></form>"
+			});
+			var btns = $("<div>",{
+				class: "add-btns",
+				html: "<div class='btn withoverlay' rel='save' rev='album'>Ajouter</div><div class='btn' rel='cancel'>Annuler</div><div class='clear'></div>"
+			});
+			$("#global").append(addform,btns);
+			if(smartphone){
+				$("table").append("<tr><th>Titre</th></tr><tr><td><input type='text' id='albumtitle' name='albumtitle' value=''/></td></tr>");
+			}else{
+				$("table").append("<tr><th>Titre</th><td><input type='text' id='albumtitle' name='albumtitle' value=''/></td></tr>");
+			}
+		break;
+		
+		case "editalbum":
+			for(var i = 0; i < jsonarray.albums.length; i++){
+				if(jsonarray.albums[i]['id'] == current.album){
+					album = jsonarray.albums[i];
+				}
+			}
+			if(album.id === undefined){
+				$("#global").append("<div class='noresults'>L'album demandée n'a pas été trouvée...</div>");
+			}else{
+				var addform = $("<div>",{
+					class: "add-form",
+					html: "<form id='edit_form'><input type='hidden' id='action' value='editalbum'/><input type='hidden' id='albumid' value='"+album.id+"'/><table></table></form>"
+				});
+				var btns = $("<div>",{
+					class: "add-btns",
+					html: "<div class='btn withoverlay' rel='save' rev='album'>Enregistrer</div><div class='btn' rel='cancel' rev='album'>Annuler</div><div class='btn' rel='deletealbum'>Supprimer</div><div class='clear'></div>"
+				});
+				$("#global").append(addform,btns);
+				if(smartphone){
+					$("table").append("<tr><th>Titre</th></tr><tr><td><input type='text' id='albumtitle' name='albumtitle' value='"+album.name+"'/></td></tr>");
+				}else{
+					$("table").append("<tr><th>Titre</th><td><input type='text' id='albumtitle' name='albumtitle' value='"+album.name+"'/></td></tr>");
+				}
+			}
 		break;
 		
 		case "logout":
@@ -460,7 +632,58 @@ function buildTemplate(template){
 		break;
 		
 		default:
-		case "home":
+		case "compte":
+			var addform = $("<div>",{
+				class: "add-form"
+			});
+			var changepwd_title = $("<div>",{
+				class: "bloc-title",
+				rel: "changepwd",
+				text: "Changer mon mot de passe"
+			});
+			var changepwd_form = $("<div>",{
+				class: "form-bloc",
+				rel: "changepwd",
+				html: "<table rel='changepwd'></table>"
+			});
+			var changepwd_btns = $("<div>",{
+				class: "add-btns",
+				html: "<div class='btn withoverlay' rel='save' rev='changepwd'>Enregistrer</div><div class='btn' rel='cancel' rev='changepwd'>Annuler</div><div class='clear'></div>"
+			});
+			changepwd_form.append(changepwd_btns);
+			var settings_title = $("<div>",{
+				class: "bloc-title",
+				rel: "settings",
+				text: "Réglages de mon compte"
+			});
+			var settings_form = $("<div>",{
+				class: "form-bloc",
+				rel: "settings",
+				html: "<table rel='settings'></table>"
+			});
+			var settings_btns = $("<div>",{
+				class: "add-btns",
+				html: "<div class='btn withoverlay' rel='save' rev='settings'>Enregistrer</div><div class='btn' rel='cancel' rev='settings'>Annuler</div><div class='clear'></div>"
+			});
+			settings_form.append(settings_btns);
+			addform.append(changepwd_title, changepwd_form, settings_title, settings_form);
+			$("#global").append(addform);
+			
+			if(smartphone){
+				$("table[rel='changepwd']").append("<tr><th>Mot de passe</th></tr><tr><td><input type='password' id='passwd' name='passwd' value=''/></td></tr>");
+				$("table[rel='changepwd']").append("<tr><th>Répéter le mot de passe</th></tr><tr><td><input type='password' id='passwd2' name='passwd2' value=''/></td></tr>");
+				
+				$("table[rel='settings']").append("<tr><th>Trier les images par</th></tr><tr><td><select id='ordre' name='ordre'><option value='dateadd'>Date</option><option value='title'>Titre</option></select></td></tr>");
+				$("table[rel='settings']").append("<tr><th>Tri</th></tr><tr><td><select id='ordre' name='ordre'><option value='ASC'>Croissant</option><option value='DESC'>Décroissant</option></select></td></tr>");
+				$("table[rel='settings']").append("<tr><th>Nombre d'images</th></tr><tr><td><select id='step' name='step'><option value='10'>10</option><option value='20'>20</option><option value='50'>50</option></select></td></tr>");
+			}else{
+				$("table[rel='changepwd']").append("<tr><th>Mot de passe</th><td><input type='password' id='passwd' name='passwd' value=''/></td></tr>");
+				$("table[rel='changepwd']").append("<tr><th>Répéter le mot de passe</th><td><input type='password' id='passwd2' name='passwd2' value=''/></td></tr>");
+				
+				$("table[rel='settings']").append("<tr><th>Trier les images par</th><td><select id='champ' name='champ'><option value='dateadd'>Date</option><option value='title'>Titre</option></select></td></tr>");
+				$("table[rel='settings']").append("<tr><th>Tri</th><td><select id='ordre' name='ordre'><option value='ASC'>Croissant</option><option value='DESC'>Décroissant</option></select></td></tr>");
+				$("table[rel='settings']").append("<tr><th>Nombre d'images</th><td><select id='step' name='step'><option value='10'>10</option><option value='20'>20</option><option value='50'>50</option></select></td></tr>");
+			}
 			
 		break;
 	}
@@ -470,7 +693,8 @@ function buildTemplate(template){
 	}});
 }
 
-function reloadJson(){
+function reloadJson(template){
+	if(template === undefined){ template = false; }
 	console.log("Call function *reloadJson*");
 	$(".overlay").show();
 	$(".loader").show();
@@ -484,6 +708,9 @@ function reloadJson(){
 		console.log("JSON Array reloaded!");
 		$(".overlay").hide();
 		$(".loader").fadeOut();
+		if(template != false){
+			buildTemplate(template);
+		}
 	});
 }
 

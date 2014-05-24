@@ -10,6 +10,8 @@ class User {
 	private $_step = 10;
 	private $_field = "dateadd";
 	private $_ordre = "DESC";
+	private $_quota = 50; /* in MB */
+	private $_logged = "";
 	
 	/**
 	 * Build a new User object
@@ -39,6 +41,8 @@ class User {
 	public function step(){ return $this->_step; }
 	public function field(){ return $this->_field; }
 	public function ordre(){ return $this->_ordre; }
+	public function quota(){ return $this->_quota; }
+	public function logged(){ return $this->_logged; }
 	
 	public function setId($val){ 
 		$val = (int) $val;
@@ -73,6 +77,18 @@ class User {
 			$this->_ordre = $val; 
 		}
 	}
+	public function setQuota($val){ 
+		$val = (int) $val;
+		if(is_int($val)){
+			$this->_quota = $val; 
+		}
+	}
+	
+	public function setLogged($val){ 
+		if(is_string($val)){
+			$this->_logged = $val; 
+		}
+	}
 	
 	private function login(){
 		$_SESSION['user_id'] = $this->_id;
@@ -81,6 +97,7 @@ class User {
 		$_SESSION['user_field'] = $this->_field;
 		$_SESSION['user_ordre'] = $this->_ordre;
 		$_SESSION['user_step'] = $this->_step;
+		$_SESSION['user_quota'] = $this->_quota;
 	}
 	
 	public function logout(){

@@ -34,6 +34,20 @@ class ImagesManager{
 		}
 	}
 	
+	public function deleteFromAlbum($albumid){
+		$images = array();
+		$q = $this->_db->prepare("SELECT images.id as id, timestamp, orientation, albumid, albums.name as album, userid, title, dateadd, width, height FROM images Inner Join albums ON images.albumid = albums.id WHERE albumid = :albumid ORDER BY dateadd DESC");
+		$q->bindValue(':albumid',$userid);
+		$q->execute();
+		
+		while($datas = $q->fetch(PDO::FETCH_ASSOC)){
+			$images[] = new Image($datas);
+		}
+		foreach($images as $img){
+			$this->delete($img);
+		}
+	}
+	
 	public function count($userid){
 		$q = $this->_db->prepare("SELECT COUNT(id) as elements FROM images WHERE userid = :userid");
 		$q->bindValue(':userid',$userid);

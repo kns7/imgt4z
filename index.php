@@ -41,9 +41,9 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 		<nav>
 			<ul>
 				<li class='menu' rel='back'>CACHER MENU</li>
-				<li class='menu active' rel='home'>ACCUEIL</li>
+				<li class='menu active' rel='albums'>MES IMAGES</li>
 				<li class='menu' rel='upload'>UPLOADER</li>
-				<li class='menu' rel='albums'>MES IMAGES</li>
+				<li class='menu' rel='compte'>MON COMPTE</li>
 				<li class='menu' rel='logout'>DECONNEXION</li>
 			</ul>
 		</nav>

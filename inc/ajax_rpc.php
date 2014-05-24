@@ -75,6 +75,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 				}
 			}
 			$rArray['storage']['size'] = $size;
+			$rArray['storage']['quota'] = $_SESSION['user_quota'];
 		break;
 		
 		case "logout":
@@ -173,6 +174,9 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 			if($_POST['imgid'] != "" && !empty($_POST['imgid']) && isset($_POST['imgid'])){ 
 				$image = $imagesManager->get($_POST['imgid']);
 			}
+			if($_POST['albumid'] != "" && !empty($_POST['albumid']) && isset($_POST['albumid'])){ 
+				$album = $albumsManager->get($_POST['albumid']);
+			}
 			switch($_POST['what']){
 				case "rotatel":
 				case "rotater":
@@ -189,26 +193,83 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 				case "delete":
 					$rArray['result'] = $imagesManager->delete($image);
 				break;
+			
+				case "deletealbum":
+					$rArray['result'] = $albumsManager->delete($album, $_POST['deleteimages']);
+				break;
 			}
 		break;
 	
 		case "save":
-			if($_POST['imgid'] != "" && !empty($_POST['imgid']) && isset($_POST['imgid'])){ 
-				$image = $imagesManager->get($_POST['imgid']);
-			}
 			switch($_POST['what']){
-				case "imagealbum":
-					$image->setAlbumid($_POST['val']);
+				case "album":
+					if($_POST['albumid'] != "" && !empty($_POST['albumid']) && isset($_POST['albumid'])){ 
+						/* Update Album */
+						$album = $albumsManager->get($_POST['albumid']);
+						$album->setName($_POST['albumtitle']);
+						$album->setOwnerid($_SESSION['user_id']);
+						if($albumsManager->update($album)){
+							$rArray['result'] = 1;
+						}else{
+							$rArray['result'] = 0;
+						}
+					}else{
+						/* Add Album */
+						$album = new Album(array(
+							'name' => $_POST['albumtitle'],
+							'ownerid' => $_SESSION['user_id']
+						));
+						if($albumsManager->add($album)){
+							$rArray['result'] = 1;
+						}else{
+							$rArray['result'] = 0;
+						}
+					}
 				break;
 			
-				case "imagetitle":
-					$image->setTitle($_POST['val']);
+				case "image":
+					if($_POST['imgid'] != "" && !empty($_POST['imgid']) && isset($_POST['imgid'])){ 
+					$image = $imagesManager->get($_POST['imgid']);
+					}
+					switch($_POST['field']){
+						case "imagealbum":
+							$image->setAlbumid($_POST['val']);
+						break;
+
+						case "imagetitle":
+							$image->setTitle($_POST['val']);
+						break;
+					}
+					if($imagesManager->update($image)){
+						$rArray['result'] = 1;
+					}else{
+						$rArray['result'] = 0;
+					}
 				break;
-			}
-			if($imagesManager->update($image)){
-				$rArray['result'] = 1;
-			}else{
-				$rArray['result'] = 0;
+				
+				case "user":
+					$user = $usersManager->get($_SESSION['user_id']);
+					switch($_POST['field']){
+						case "password":
+							if($usersManager->updatePassword($_POST['passwd'])){
+								$rArray['result'] = 1;
+							}else{
+								$rArray['result'] = 0;
+							}
+						break;
+					
+						case "settings":
+							$user->setStep($_POST['step']);
+							$user->setField($_POST['champ']);
+							$user->setAsc($_POST['ordre']);
+							if($usersManager->updateSettings($user)){
+								$rArray['result'] = 1;
+							}else{
+								$rArray['result'] = 0;
+							}
+						break;
+					}
+				break;
 			}
 		break;
 		

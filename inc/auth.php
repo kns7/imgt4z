@@ -6,9 +6,14 @@
 if(isset($_POST) && !empty($_POST['user'])){
 	switch($auth_type){
 		case "local":
-			if($usersManager->login($_POST['user'],$_POST['pwd']) == "error"){
+			$user = $usersManager->login($_POST['user'],$_POST['pwd']);
+			if($user == "error"){
 				$error = "Utilisateur et/ou mot de passe incorrects!";
 			}else{
+				if(!file_exists("storage/".$user->id())){
+					mkdir("storage/".$user->id(), 775);
+					echo "create directory";
+				}
 				header("Location: /");
 			}
 		break;

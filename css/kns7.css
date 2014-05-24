@@ -43,7 +43,7 @@ nav ul .menu {
 nav ul .menu[rel=back]{ background-image: url('../img/menu_back.png'); display: none; }
 nav ul .menu[rel=upload]{ background-image: url('../img/menu_upload.png'); }
 nav ul .menu[rel=images]{ background-image: url('../img/menu_images.png'); }
-nav ul .menu[rel=home]{ background-image: url('../img/menu_home.png'); }
+nav ul .menu[rel=compte]{ background-image: url('../img/menu_compte.png'); }
 nav ul .menu[rel=logout]{ background-image: url('../img/menu_logout.png'); }
 nav ul .menu:hover,nav ul li.active { background-color: #010101; }
 
@@ -66,6 +66,23 @@ nav ul .menu:hover,nav ul li.active { background-color: #010101; }
 	color: #555;
 	background-color: #59D387;
 	border-color: #43D100;
+}
+
+/* Formulaires */
+.upload-form, .upload-btns, .add-form, .add-btns {
+	background: #555555;
+}
+.bloc-title {
+	background: #888888;
+	color: white;
+	border-bottom-color: white;
+}
+.form-bloc {
+	background: #888888;
+	border-color: white;
+}
+.form-bloc .add-btns {
+	background: #888888;
 }
 
 table th {
@@ -102,21 +119,18 @@ table td input[type=text]:focus, table td textarea:focus, table td select:focus 
 .img-bloc .infos .title[rel='4']{background-image: url('../img/categories/16/cat_4.png');}
 .img-bloc .infos .title[rel='5']{background-image: url('../img/categories/16/cat_5.png');}
 .img-bloc .infos .title[rel='6']{background-image: url('../img/categories/16/cat_6.png');}
-.img-bloc .infos .delete {
-	background: #808080 url('../img/delete_16.png') 50% no-repeat;
+.img-bloc .infos .delete, .albums .album-bloc .edit {
+	background-color: #FF9900;
 }
 .img-bloc .infos .delete:hover {
 	background-color: #E01200;
 }
+.albums .album-bloc .edit:hover {
+	background-color: #FFD387;
+}
 .img-edit {
 	background: #555555;
 }
-
-/* Section Upload */
-.upload-form, .upload-btns {
-	background: #555555;
-}
-
 
 /* Buttons Decorations */
 .btn, .btn-menu {
@@ -126,21 +140,27 @@ table td input[type=text]:focus, table td textarea:focus, table td select:focus 
 .btn-menu {
 	background-color: #212121;
 }
-.upload-btns .btn { color: #fff; }
+.upload-btns .btn,.add-btns .btn { color: #fff; }
 
-.btn[rel='resize']{ background-image: url('../img/resize_24.png'); }
+.btn[rel='add'][rev='album']{ background-image: url('../img/album_add_24.png');}
+.btn[rel='backto']{ background-image: url('../img/backto_24.png');}
+.btn[rel='resize']{ background-image: url('../img/resize_24.png'); display: none;}
 .btn[rel='rotatel']{ background-image: url('../img/rotate_left_24.png'); }
 .btn[rel='rotater']{ background-image: url('../img/rotate_right_24.png'); }
 .btn[rel='delete']{ background-image: url('../img/delete_24.png'); background-color: #E01200; }
-.btn[rel='send']{ background-color: #43C343;}
-.btn[rel='cancel']{ background-color: #EB4116;}
+.btn[rel='deletealbum'] { background-image: none; background-color: #E01200;}
+.btn[rel='send'],.btn[rel='save']{ background-color: #43C343;}
+.btn[rel='cancel']{ background-color: #b2b2b2;}
 .btn[rel='filter']{ background-image: url('../img/filter_24.png'); }
 .btn[rel='show'][amount='10'],.btn[rel='changeshow'][amount='10']{ background-image: url('../img/show10_24.png'); }
 .btn[rel='show'][amount='20'],.btn[rel='changeshow'][amount='20']{ background-image: url('../img/show20_24.png'); }
 .btn[rel='show'][amount='50'],.btn[rel='changeshow'][amount='50']{ background-image: url('../img/show50_24.png'); }
+.btn[rel='prev'], .btn[rel='next']{ width: 80px; float: right; }
 .btn:hover { background-color: #FFD387; }
-.btn[rel='cancel']:hover { background-color: #FF0000; }
-.btn[rel='send']:hover { background-color: #00FF00; }
+.btn[rel='cancel']:hover { background-color: #a2a2a2; }
+.btn[rel='send']:hover,.btn[rel='save']:hover { background-color: #00FF00; }
 .btn[rel='delete']:hover { background-color: #DD7A73; }
+.btn[rel='deletealbum']:hover { background-color: #DD7A73; }
 .btn.active { background-color: #FFD387; }
-.btn.disable { background-color: #917E5F;}
+.btn.disable { background-color: #917E5F; cursor: normal; opacity: 0.5;}
+.add-btns .btn[rel='delete'] { background-image: none;}

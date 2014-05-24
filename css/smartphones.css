@@ -257,7 +257,7 @@ Mini Tablettes (Largeur 480px)
 	nav ul .menu[rel=back]{ background-image: url('../img/menu_back_48.png'); }
 	nav ul .menu[rel=upload]{ background-image: url('../img/menu_upload_48.png'); }
 	nav ul .menu[rel=images]{ background-image: url('../img/menu_images_48.png'); }
-	nav ul .menu[rel=home]{ background-image: url('../img/menu_home_48.png'); }
+	nav ul .menu[rel=compte]{ background-image: url('../img/menu_compte_48.png'); }
 	nav ul .menu[rel=logout]{ background-image: url('../img/menu_logout_48.png'); }
 	nav ul .menu { height: 62px; }
 }

@@ -4,16 +4,16 @@ session_start();
 include('config.php');
 /* Include Classes */
 include('class/UsersManager.class.php');
-include('class/CategoriesManager.class.php');
+include('class/AlbumsManager.class.php');
 include('class/ImagesManager.class.php');
 include('class/User.class.php');
-include('class/Categorie.class.php');
+include('class/Album.class.php');
 include('class/Image.class.php');
 
 /* Create PDO Connector for Images */
 $imagesManager = new ImagesManager($conn_img);
-/* Create PDO Connector for Categories */
-$categoriesManager = new CategoriesManager($conn_img);
+/* Create PDO Connector for Albums */
+$albumsManager = new AlbumsManager($conn_img);
 /* Create PDO Connector for Users */
 $usersManager = new UsersManager($conn_img);
 
