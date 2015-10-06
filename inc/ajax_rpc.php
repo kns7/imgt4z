@@ -1,8 +1,24 @@
 <?php
 session_start();
-/* Include Config File */
-include('config.php');
-/* Include Classes */
+/* Read Configuration File (config.ini) */
+$conf = parse_ini_file("../config.ini", true);
+
+/* Connect to DB */
+try {
+	$conn_img = new PDO('mysql:host='.$conf['mysql']['host'].';port='.$conf['mysql']['port'].';dbname='.$conf['mysql']['db_img'], $conf['mysql']['user'], $conf['mysql']['pwd']);
+	$conn_img->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+}catch(Exception $e){
+	echo "DB connection to IMGT4Z error: ".$e->getMessage();
+	die();
+}
+try {
+	$conn_forum = new PDO('mysql:host='.$conf['mysql']['host'].';port='.$conf['mysql']['port'].';dbname='.$conf['mysql']['db_forum'], $conf['mysql']['user'], $conf['mysql']['pwd']);
+	$conn_forum->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+}catch(Exception $e){
+	echo "DB connection to FORUM error: ".$e->getMessage();
+	die();
+}
+
 include('class/UsersManager.class.php');
 include('class/AlbumsManager.class.php');
 include('class/ImagesManager.class.php');
@@ -64,6 +80,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 			$rArray['user']['field'] = $_SESSION['user_field'];
 			$rArray['user']['ordre'] = $_SESSION['user_ordre'];
 			$rArray['user']['step'] = $_SESSION['user_step'];
+			$rArray['user']['admin'] = $_SESSION['user_admin'];
 			
 			/* Comptage des images */
 			$storage = opendir("../storage/".$_SESSION['user_id']);
@@ -311,7 +328,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && isset($_POST['
 			if(isset($_POST['field'])){ $user->setField($_POST['field']); $_SESSION['user_field'] = $_POST['field']; }
 			if(isset($_POST['ordre'])){ $user->setAsc($_POST['ordre']); $_SESSION['user_ordre'] = $_POST['ordre']; }
 			if(isset($_POST['step'])){ $user->setStep($_POST['step']); $_SESSION['user_step'] = $_POST['step']; }
-			$usersManager->update($user);
+			$usersManager->updateSettings($user);
 		break;
 	}
 	echo json_encode($rArray);

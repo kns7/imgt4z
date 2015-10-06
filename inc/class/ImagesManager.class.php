@@ -67,6 +67,14 @@ class ImagesManager{
 		return $result['images'];
 	}
 	
+	public function admin_count(){
+		$q = $this->_db->prepare("SELECT COUNT(id) as images FROM images WHERE 1");
+		$q->execute();
+		$result = $q->fetch(PDO::FETCH_ASSOC);
+		
+		return $result['images'];
+	}
+	
 	public function get($id){
 		$id = (int) $id;
 		$q = $this->_db->prepare("SELECT images.id as id, timestamp, orientation, albumid, albums.name as album, userid, title, dateadd, width, height FROM images Inner Join albums ON images.albumid = albums.id WHERE images.id = :id");

@@ -22,6 +22,16 @@ class UsersManager {
 		}
 	}
 	
+	public function getList(){
+		$q = $this->_db->prepare("SELECT id, name, admin, step, field, ordre, logged, quota FROM users WHERE 1");
+		$q->execute();
+		
+		while($datas = $q->fetch(PDO::FETCH_ASSOC)){
+			$users[] = new User($datas);
+		}
+		return $users;
+	}
+	
 	public function updateSettings(User $user){
 		$q = $this->_db->prepare("UPDATE users SET step = :step, field = :field, ordre = :ordre WHERE id = :id");
 		$q->bindValue(':step', $user->step(), PDO::PARAM_INT);
@@ -38,20 +48,47 @@ class UsersManager {
 		return $q->execute();
 	}
 	
-	public function login($login,$password){
-		$q = $this->_db->prepare("SELECT id, name, admin, step, field, ordre, logged, quota FROM users WHERE name = :name AND password = :password");
-		$q->bindValue(':name',$login);
-		$q->bindValue(':password',md5($password));
-		$q->execute();
-		$result = $q->fetch(PDO::FETCH_ASSOC);
-		if(empty($result)){
-			return "error";
-		}else{
-			$user = new User($result);
-			$user->setLogged(date("Y-m-d H:i:s"));
-			$this->updateLogged($user);
-			return $user;
+	public function login($logininfos){
+		$username = $logininfos['username'];
+		$password = $logininfos['password'];
+		switch($logininfos['auth']){
+			case "local":
+				$q = $this->_db->prepare("SELECT id, name, admin, step, field, ordre, logged, quota FROM users WHERE name = :name AND password = :password");
+				$q->bindValue(':name',$username);
+				$q->bindValue(':password',$password);
+				$q->execute();
+				$result = $q->fetch(PDO::FETCH_ASSOC);
+				if(empty($result)){
+					return "error";
+				}else{
+					$user = new User($result);
+					$user->setLogged(date("Y-m-d H:i:s"));
+					$this->updateLogged($user);
+				}
+			break;
+			
+			case "phpbb":
+				$q = $this->_db->prepare("SELECT id, name, admin, step, field, ordre, logged, quota FROM users WHERE id = :id");
+				$q->bindValue(':id',$logininfos['phpbbid']);
+				$q->execute();
+				$result = $q->fetch(PDO::FETCH_ASSOC);
+				if(empty($result)){
+					return "error";
+				}else{
+					$user = new User(array(
+						'id' => $logininfos['phpbbid'],
+						'name' => $logininfos['phpbbname'],
+						'admin' => $logininfos['admin'],
+						'step' => $user['step'],
+						'field' => $user['field'],
+						'ordre' => $user['ordre'],
+						'quota' => $user['quota'],
+						'logged' => $user['logged']
+					));
+				}
+			break;
 		}
+		return $user;
 	}
 	
 	public function updateLogged(User $user){

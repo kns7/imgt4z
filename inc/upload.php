@@ -1,7 +1,25 @@
 <?php
 session_start();
-/* Include Config File */
-include('config.php');
+/* Read Configuration File (config.ini) */
+$conf = parse_ini_file("../config.ini", true);
+
+/* Connect to DB */
+try {
+	$conn_img = new PDO('mysql:host='.$conf['mysql']['host'].';port='.$conf['mysql']['port'].';dbname='.$conf['mysql']['db_img'], $conf['mysql']['user'], $conf['mysql']['pwd']);
+	$conn_img->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+}catch(Exception $e){
+	echo "DB connection to IMGT4Z error: ".$e->getMessage();
+	die();
+}
+try {
+	$conn_forum = new PDO('mysql:host='.$conf['mysql']['host'].';port='.$conf['mysql']['port'].';dbname='.$conf['mysql']['db_forum'], $conf['mysql']['user'], $conf['mysql']['pwd']);
+	$conn_forum->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+}catch(Exception $e){
+	echo "DB connection to FORUM error: ".$e->getMessage();
+	die();
+}
+
+
 /* Include Classes */
 include('class/UsersManager.class.php');
 include('class/AlbumsManager.class.php');
@@ -74,7 +92,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])){
 
 			break;
 			default:
-				$error = "Type de fichier non accepté!";
+				$error = "Type de fichier non accepté! (".$_FILES[$fileElementName]['type'].")";
 				$trigger_error = true;
 			break;
 		}
@@ -146,7 +164,7 @@ if(isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])){
 			imagedestroy($uploadimage);
 			imagedestroy($newimage);
 			//imagedestroy($wamark);
-			
+			$rArray['result'] = 0;
 			$rArray['width'] = $width;
 			$rArray['height'] = $height;
 			$rArray['timestamp'] = $timestamp;

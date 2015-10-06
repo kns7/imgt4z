@@ -4,77 +4,54 @@
  * If user is not logged, he gets the Login fields
  */
 if(isset($_POST) && !empty($_POST['user'])){
-	switch($auth_type){
+	switch($conf[auth][type]){
 		case "local":
-			$user = $usersManager->login($_POST['user'],$_POST['pwd']);
-			if($user == "error"){
-				$error = "Utilisateur et/ou mot de passe incorrects!";
-			}else{
-				if(!file_exists("storage/".$user->id())){
-					mkdir("storage/".$user->id(), 775);
-					echo "create directory";
-				}
-				header("Location: /");
-			}
+			$login = array(
+				'auth' => $conf[auth][type],
+				'username' => $_POST['user'],
+				'password' => md5($_POST['pwd'])
+			);
 		break;
 	
 		case "phpbb":
-			/*define('IN_PHPBB', true);
+			define('IN_PHPBB', true);
 			$phpEx = substr(strrchr(__FILE__, '.'), 1);
-			$phpbb_root_path = './../forum/';
-			$website_root_path = './../';
-			include($phpbb_root_path . 'common.php');
+			include($conf[phpbb][path] . 'common.php');
 			// Start session management
-			$user->session_begin();
+			$userphpbb->session_begin();
 			$auth->acl($user->data);
-			$user->setup();*/
-
-
-
-			/* Try to login user using phpBB Functions to hash password */
-			/* => Bon ca me broute, j'y arrive pô... 
-
-			include('phpbbinc.php');
-			$query = "SELECT user_id, username, username_clean FROM for_users WHERE username_clean = ? AND user_password = ?";
-			$prep = $conn_forum->prepare($query);
-			$prep->bindValue(1,$_POST['user'],PDO::PARAM_STR);
-			$prep->bindValue(1,phpbb_hash($_POST['pwd']),PDO::PARAM_STR);
-			$prep->execute();
-			$return = $prep->fetchAll();
-			print_r($return);*/
-
-			/*
-			 * Du coup, mot de passe temporaire:
-			 * lat4zslpf (Les Admins T4Zone Sont Les Plus Beaux) ;)
-			 * 
-			 * Et pour les zozos modos:
-			 * User: modo
-			 * Mdp : VivalaZone1
-			 * 
-			 * Et pour l'asso (enfin le bureau):
-			 * User: asso
-			 * Mdp: 07032014
-			 */
-			if($_POST['user'] == "Serialg" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
-				$user = $usersManager->get('25549');
-				header("Location: /");
-			}elseif($_POST['user'] == "jeb" && md5($_POST['pwd']) == "80f582c1082b49ae6335cadee4b92132"){
-				$user = $usersManager->get('2554');
-				header("Location: /");
-			}elseif($_POST['user'] == "modos" && md5($_POST['pwd']) == "6f85aa27462f8587a6bbb7beadb0e71b"){
-				$user = $usersManager->get('25548');
-				header("Location: /");
-			}elseif($_POST['user'] == "asso" && md5($_POST['pwd']) == "3bf75af9a59b1d53da11c9a89c790ee4"){
-						$user = $usersManager->get('10');
-						header("Location: /");
+			$user->setup();
+			// If user is not registered or does not have access to a specific Forum goto Login
+			if (!$user->data['is_registered'] || !isset($user->data['is_registered']) || !$auth->acl_get('f_read', $conf[phpbb][forum_allowed_id])){
+				login_box($conf[site][path]);
+				exit();
 			}else{
-				$error = "Utilisateur et/ou mot de passe incorrects!";
+				$admin = ($auth->acl_get('a_')) ? "1":"0";
+				$login = array(
+					'auth' => $conf[auth][type],
+					'phpbbid' => $userphpbb->data['user_id'],
+					'phpbbname' => $userphpbb->data['username'],
+					'admin' => $admin,
+					'autocreate' => $conf[phpbb][autocreate_user]
+				);
 			}
 		break;
 		
 		default:
 			$error = "Mismatch in Configuration, please contact administrator!";
 		break;
+	}
+	$user = $usersManager->login($login);
+	if($user == "error"){
+		$error = "Utilisateur et/ou mot de passe incorrects!";
+	}elseif($user == "notcreated"){
+		$error = "Demandez d'abord un accès sur le Forum!";
+	}else{
+		if(!file_exists("storage/".$user->id())){
+			mkdir("storage/".$user->id(), 775);
+			echo "create directory";
+		}
+		header("Location: /");
 	}
 }
 ?>
@@ -91,17 +68,17 @@ if(isset($_POST) && !empty($_POST['user'])){
 		<meta name="bingbot" content="noimageindex">
 		<meta name="Slurp" content="noimageindex">
 		<link rel="stylesheet" href="css/style.css"/>
-		<link rel="stylesheet" type="text/css" href="<?php echo $style_url;?>" media="screen"/>
-		<title><?php echo $title_tool;?> - Authentification</title>
+		<link rel="stylesheet" type="text/css" href="styles/<?php echo $conf[site][style];?>/<?php echo $conf[site][style];?>.css" media="screen"/>
+		<title><?php echo $conf[site][title];?> - Authentification</title>
 	</head>
 	<body>
 		<section class="auth-form">
 			<div class="auth-logo"></div>
 			<form id="login" method="post">
-				<p>Plateforme d'hébergement d'images KNS7. L'accès est strictement réservé aux membres.</p>
+				<p>Plateforme d'hébergement d'images KNS7. L'accès est réservé aux membres.</p>
 				<input type='text' id='user' name='user' value="nom d'utilisateur"/><br/>
 				<input type='password' id='pwd' name='pwd' value="Password"/><br/>
-				<input type='submit' value="Connexion"/>
+				<input type='submit' class='btn large' value="Connexion"/>
 			</form>
 			<?php
 			if(isset($error)){
@@ -111,7 +88,7 @@ if(isset($_POST) && !empty($_POST['user'])){
 		</section>
 	</body>
 	<script type='text/javascript' src='inc/jquery-1.11.0.min.js'></script>
-	<script type='text/javascript' src='inc/imgt4z.logon.js'></script>
+	<script type='text/javascript' src='inc/img.logon.js'></script>
 </html>
 <?php
 exit();

@@ -82,9 +82,6 @@ a {
 	margin: 5px;
 }
 .auth-form form input[type=submit] {
-	background-color: #FF9900;
-	color: white;
-	border: 1px solid silver;
 	padding: 5px;
 }
 .auth-error {
@@ -97,7 +94,6 @@ a {
 }
 
 /* Main App */
-
 .loader {
 	position: fixed;
 	top: 10px;
@@ -188,6 +184,10 @@ nav ul .menu[rel=upload]{ background-image: url('../img/menu_upload.png'); }
 nav ul .menu[rel=albums]{ background-image: url('../img/menu_images.png'); }
 nav ul .menu[rel=compte]{ background-image: url('../img/menu_compte.png'); }
 nav ul .menu[rel=logout]{ background-image: url('../img/menu_logout.png'); }
+nav ul .menu[rel=users]{ background-image: url('../img/menu_compte.png'); }
+nav ul .menu[rel=storage]{ background-image: url('../img/menu_storage.png'); }
+nav ul .menu[rel=infos]{ background-image: url('../img/menu_infos.png'); }
+nav ul .menu[rel=leave]{ background-image: url('../img/menu_logout.png'); }
 nav ul .menu:hover,nav ul li.active { background-color: #010101; }
 
 #global{
@@ -253,6 +253,9 @@ nav ul .menu:hover,nav ul li.active { background-color: #010101; }
 	cursor: pointer;
 	background-position: 5px 4px;
 	background-repeat: no-repeat;
+	background-color: #888888;
+	color: white;
+	border-color: white;
 }
 .form-bloc {
 	display: none;
@@ -260,6 +263,9 @@ nav ul .menu:hover,nav ul li.active { background-color: #010101; }
 	border-top: 0px solid;
 	border-radius: 0px 0px 5px 5px;
 	margin-bottom: 5px;
+	background-color: #888888;
+	color: white;
+	border-color: white;
 }
 table {
 	border: 0px solid;
@@ -341,7 +347,7 @@ table td input[type=file]{
 	bottom: 5px;
 	left: 115px;
 	opacity: 0.95;
-	color: #ff9900;
+	color: #fff;
 	text-align: center;
 	line-height: 42px;
 }
@@ -364,8 +370,8 @@ table td input[type=file]{
 	position: relative;
 }
 .images .img-bloc:hover, .albums .album-bloc:hover {
-	border: 1px solid #FF9900;
-	box-shadow: 0px 0px 10px #FF9900;
+	border: 1px solid #b9b9b9;
+	box-shadow: 0px 0px 10px #b9b9b9;
 }
 .images .img-bloc .img {
 	max-height: 150px;
@@ -416,7 +422,7 @@ table td input[type=file]{
 .img-bloc .infos .delete, .albums .album-bloc .edit {
 	width: 20px;
 	height: 20px;
-	background: #e6e6e6 url('../img/delete_16.png') 50% no-repeat;
+	background: #e6e6e6;
 	border: 1px solid #808080;
 	border-radius: 4px;
 	cursor: pointer;
@@ -435,7 +441,6 @@ table td input[type=file]{
 	position: absolute;
 	top: 0px;
 	right: 0px;
-	background: #e6e6e6 url('../img/edit_16.png') 50% no-repeat;
 }
 
 /* Detail d'une image */
@@ -448,6 +453,7 @@ table td input[type=file]{
 .img-preview {
 	margin: 0px auto;
 	text-align: center;
+	position: relative;
 }
 #imgpreview.horizontal {
 	width: 800px;
@@ -468,63 +474,137 @@ table td input[type=file]{
 }
 .img-actions {
 	position: absolute;
-	top: 5px;
-	right: 5px;
+	top: 10px;
+	right: 15px;
 	margin: 0px;
 }
 
-/* Buttons Decorations */
-.btn, .btn-menu {
-	width: 32px;
-	height: 32px;
-	line-height: 32px;
-	background-color: #ff9900;
-	color: #3D3D3D;
-	background-position: 50%;
-	background-repeat: no-repeat;
-	border-radius: 5px;
-	margin: 5px;
-	cursor: pointer;
-	text-align: center;
-	vertical-align: middle;
-	font-weight: bold;
+/* Admin */
+.admin_table{
+	border: 1px solid;
+	border-collapse: collapse;
+	padding: 5px;
+	margin: 10px;
 }
+.admin_table tr {
+	
+}
+.admin_table th, .admin_table td {
+	padding: 5px;
+}
+
+/* Buttons Decorations */
 .btn-menu {
 	display: none;
 	height: 128px;
 	position: absolute;
-	bottom: 50px;
-	left: -5px;
+	bottom: 55px;
+	left: 0px;
 	background-color: #212121;
 	opacity: 0.95;
 	z-index: 0;
 	width: 42;
 	padding: 10px;
 }
-.upload-btns .btn,.add-btns .btn { float: right; width: 100px; color: #fff; }
-.img-actions .btn { float: right; }
-.img-menu .btn { float: left; }
 
-.btn[rel='add'][rev='album']{ background-image: url('../img/album_add_24.png');}
-.btn[rel='backto']{ background-image: url('../img/backto_24.png');}
-.btn[rel='resize']{ background-image: url('../img/resize_24.png'); display: none;}
-.btn[rel='rotatel']{ background-image: url('../img/rotate_left_24.png'); }
-.btn[rel='rotater']{ background-image: url('../img/rotate_right_24.png'); }
-.btn[rel='delete']{ background-image: url('../img/delete_24.png'); background-color: #E01200; }
-.btn[rel='deletealbum'] { background-image: none; background-color: #E01200;}
-.btn[rel='send'],.btn[rel='save']{ background-color: #43C343;}
-.btn[rel='cancel']{ background-color: #b2b2b2;}
-.btn[rel='filter']{ background-image: url('../img/filter_24.png'); }
-.btn[rel='show'][amount='10'],.btn[rel='changeshow'][amount='10']{ background-image: url('../img/show10_24.png'); }
-.btn[rel='show'][amount='20'],.btn[rel='changeshow'][amount='20']{ background-image: url('../img/show20_24.png'); }
-.btn[rel='show'][amount='50'],.btn[rel='changeshow'][amount='50']{ background-image: url('../img/show50_24.png'); }
-.btn[rel='prev'], .btn[rel='next']{ width: 80px; float: right; }
-.btn:hover { background-color: #FFD387; }
-.btn[rel='cancel']:hover { background-color: #a2a2a2; }
-.btn[rel='send']:hover,.btn[rel='save']:hover { background-color: #00FF00; }
-.btn[rel='delete']:hover { background-color: #DD7A73; }
-.btn.active { background-color: #FFD387; }
-.btn.disable { background-color: #917E5F; cursor: normal; opacity: 0.5;}
 .bloc-title[rel='changepwd']{ background-image: url('../img/key_24.png');}
 .bloc-title[rel='settings']{ background-image: url('../img/edit_24.png');}
 .bloc-title[rel='stats']{ background-image: url('../img/stats_24.png');}
+.bloc-title[rel='admin']{ background-image: url('../img/admin_24.png'); color: #FF5F47; }
+
+.btn { 
+	font-size: 16px;
+	padding: 4px;
+	font-weight: 700;
+	border: 1px solid;
+	border-color: #ccc;
+	border-radius: 3px;
+	cursor: pointer;
+	text-align: center;
+	vertical-align: middle;
+	color: #8c8c8c;
+	background: #ffffff;
+}
+.upload-btns .btn,.add-btns .btn { float: right; }
+.album-bloc .btn {
+	margin: 11px 5px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+.btn-menu .btn {
+	margin-bottom: 10px;
+}
+.img-bloc .btn {
+	margin-top: 6px;
+	float: right;
+	display: inline;
+}
+.img-actions .btn { 
+	float: right; 
+	margin-left: 15px;
+	font-size: 30px;
+	width: 30px;
+}
+.img-preview .btn {
+	position: absolute;
+	z-index: 2;
+	top: 50%;
+	height: 80px;
+	font-size: 48px;
+	opacity: 0.7
+}
+.img-preview .btn[rel=picprev]{
+	left: 0px;
+	border-left-color: #fff;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	padding-left: 0px;
+	padding-right: 6px;
+	
+}
+.img-preview .btn[rel=picnext]{
+	right: 0px;
+	border-right-color: #fff;
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+	padding-right: 0px;
+	padding-left: 6px;
+}
+.img-preview .btn i {
+	line-height: 80px;
+}
+
+.img-menu .btn {
+	margin-left: 5px;
+	font-size: 24px;
+	float: left;
+	height: 24px;
+	line-height: 24px;
+}
+.img-menu .btn[rel=prev],
+.img-menu .btn[rel=next]{
+	float: right;
+}
+.btn.large {
+	width: 100px;
+	font-size: 14px;
+	margin-left: 5px;
+}
+
+.btn:hover {
+	color: #222;
+	background: #efefef;
+	border-color: #b9b9b9;
+}
+.btn.active { color: #222;}
+.btn[rel='delete']:hover,.btn[rel='deletealbum']:hover{ background-color:#FF5050; color: #222;}
+.large[rel='save']:hover i { color: #51A36A;}
+.large[rel='send']:hover i,.large[rel='add']:hover i { color: #51A36A;}
+
+.btn.disable,.btn.disable:hover { color: #e6e6e6; background-color: #fafafa; cursor: normal; opacity: 0.9;}
+.img-preview .btn:hover {
+	color: #8c8c8c;
+	background: #ffffff;
+	opacity: 1;
+}

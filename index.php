@@ -1,7 +1,24 @@
 <?php
 session_start();
-/* Include Config File */
-include('inc/config.php');
+/* Read Configuration File (config.ini) */
+$conf = parse_ini_file("config.ini", true);
+
+/* Connect to DB */
+try {
+	$conn_img = new PDO('mysql:host='.$conf['mysql']['host'].';port='.$conf['mysql']['port'].';dbname='.$conf['mysql']['db_img'], $conf['mysql']['user'], $conf['mysql']['pwd']);
+	$conn_img->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+}catch(Exception $e){
+	echo "DB connection to IMGT4Z error: ".$e->getMessage();
+	die();
+}
+try {
+	$conn_forum = new PDO('mysql:host='.$conf['mysql']['host'].';port='.$conf['mysql']['port'].';dbname='.$conf['mysql']['db_forum'], $conf['mysql']['user'], $conf['mysql']['pwd']);
+	$conn_forum->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+}catch(Exception $e){
+	echo "DB connection to FORUM error: ".$e->getMessage();
+	die();
+}
+
 /* Include Classes */
 include('inc/class/UsersManager.class.php');
 include('inc/class/AlbumsManager.class.php');
@@ -37,11 +54,11 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 		<link rel="icon" href="favicon_72.png" sizes="72x72">
 		<link rel="icon" href="favicon.png" sizes="128x128">
 		<link rel="apple-touch-icon" href="favicon_48.png" />
-		<link rel="shortcut icon" href="favicon.ico">
 		<link rel="stylesheet" type="text/css" href="css/style.css" media="screen"/>
-		<link rel="stylesheet" type="text/css" href="<?php echo $style_url;?>" media="screen"/>
+		<link rel="stylesheet" type="text/css" href="styles/<?php echo $conf[site][style];?>/<?php echo $conf[site][style];?>.css" media="screen"/>
 		<link rel="stylesheet" type="text/css" href="css/smartphones.css" media="screen"/>
-		<title><?php echo $title_tool;?></title>
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+		<title><?php echo $conf[site][title];?></title>
 	</head>
 	<body>
 		<div id="showmenu"></div>
@@ -62,5 +79,6 @@ if(!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])){
 	</body>
 	<script type='text/javascript' src='inc/jquery-1.11.0.min.js'></script>
 	<script type='text/javascript' src='inc/jquery.form.min.js'></script>
-	<script type='text/javascript' src='inc/imgt4z.main.js'></script>
+	<script type='text/javascript' src='inc/img.main.js'></script>
+	<script type='text/javascript' src='inc/img.user.js'></script>
 </html>

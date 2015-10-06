@@ -45,6 +45,14 @@ class AlbumsManager {
 		return $result['albums'];
 	}
 	
+	public function admin_count(){
+		$q = $this->_db->prepare("SELECT COUNT(id) as albums FROM albums WHERE 1");
+		$q->execute();
+		$result = $q->fetch(PDO::FETCH_ASSOC);
+		
+		return $result['albums'];
+	}
+	
 	public function add(Album $album){
 		$q = $this->_db->prepare("INSERT INTO albums (name,ownerid) VALUES(:name,:ownerid)");
 		$q->bindValue(":name",$album->name(), PDO::PARAM_STR);
